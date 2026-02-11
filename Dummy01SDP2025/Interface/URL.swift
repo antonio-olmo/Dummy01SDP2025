@@ -22,6 +22,24 @@ extension URL {
         .appending(path: "users")
         .appending(path: "renew")
     
+    static let getSetCollection = api
+        .appending(path: "collection")
+        .appending(path: "manga")
+    
+    static func getMangaCollection (id: Int) -> URL {
+        api
+            .appending(path: "collection")
+            .appending(path: "manga")
+            .appending(path: String(id))
+    }
+    
+    static func deleteMangaCollection (id: Int) -> URL {
+        api
+            .appending(path: "collection")
+            .appending(path: "manga")
+            .appending(path: String(id))
+    }
+    
     static func getMangas (page: Int, per: Int) -> URL {
         api
             .appending(path: "list")
@@ -93,4 +111,27 @@ extension URL {
         api.appending(path: "/search/mangasBeginsWith").appending(path: search)
     }
     
+    /*static let findMangaByAuthor = api
+        .appending(path: "search")
+        .appending(path: "manga")*/
+    
+    static func findMangaByAuthor (page: Int, per: Int) -> URL {
+        api
+            .appending(path: "search")
+            .appending(path: "manga")
+            .appending(queryItems: [
+                URLQueryItem(name: "page", value: "\(page)"),
+                URLQueryItem(name: "per", value: "\(per)")
+            ])
+    }
+    
+    static func findMangaByTitle (page: Int, per: Int) -> URL {
+        api
+            .appending(path: "search")
+            .appending(path: "manga")
+            .appending(queryItems: [
+                URLQueryItem(name: "page", value: "\(page)"),
+                URLQueryItem(name: "per", value: "\(per)")
+            ])
+    }
 }

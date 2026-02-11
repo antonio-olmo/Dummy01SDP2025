@@ -19,8 +19,8 @@ final class MangasVM {
     
     let stepPer = 20
         
-    @ObservationIgnored
-    @AppStorage("totalMangas") private var totalMangas = 0
+    /*@ObservationIgnored
+    @AppStorage("totalMangas") private*/ var totalMangas = 0
     
     /*@ObservationIgnored
     @AppStorage("mangasPagesVisited") private var mangasPagesVisitedData: Data = Data()
@@ -36,13 +36,14 @@ final class MangasVM {
     var mangas: [Manga] = []
         
     var state: ViewState = .loading
+    var dataLoaded = false
     
     var showError = false
     var errorMsg = ""
     
     init(repository: NetworkRepository = Network()) {
         self.repository = repository
-        self.loadInitMangas()
+        //self.loadInitMangas()
     }
     
     func loadInitMangas() {
@@ -50,6 +51,7 @@ final class MangasVM {
             Task {
                 await self.getTotalMangas()
                 await self.getMangas()
+                self.dataLoaded = true
                 //self.mangasPagesVisited.append(self.totalMangas == 0 ? 1 : self.totalMangas / self.stepPer)
             }
             
@@ -76,7 +78,10 @@ final class MangasVM {
     
     func getMangas() async {
         do {
+            print("TOTAL MANGAS: \(self.totalMangas)")
             let randomPage = Int.random(in: 1...Int((Double(self.totalMangas) / Double(self.stepPer)).rounded(.up)))
+            //TODO: Descomentar la de arriba y borrar la de abajo, para mostrar siempre los mismos
+            //let randomPage = 1
             self.mangas = try await repository.getMangas(page: randomPage, per: self.stepPer)
             
         } catch {

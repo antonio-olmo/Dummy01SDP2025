@@ -30,16 +30,21 @@ final class DemographicVM {
     var showError = false
     var errorMsg = ""
     
+    var searchTask: Task<Void, Never>? // ***D
+    
     init(repository: NetworkRepository = Network()) {
         self.repository = repository
         //self.loadInitMangas()
     }
     
     func loadInitMangas() {
-        Task {
+        
+        searchTask?.cancel()
+        
+        searchTask = Task {
             do {
                 print ("inicio carga de demografías ...")
-                self.demographics = try await repository.getDemographics()
+                self.demographics = try await repository.getDemographics().sorted()
                 dataLoaded = true
                 try await getMangasByDemographic()
                 //dataLoaded = true

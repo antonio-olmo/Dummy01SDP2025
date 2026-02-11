@@ -41,7 +41,7 @@ final class MainVM {
         isInitializing = false
     }    
     
-    func onAppEnterForeground() {
+    func onAppEnterForeground() async {
         print("Volvamos a fore y verificamos sesión ...")
         
         // Solo verificar si el usuario está autenticado

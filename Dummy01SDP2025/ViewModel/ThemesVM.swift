@@ -30,16 +30,22 @@ final class ThemesVM {
     var showError = false
     var errorMsg = ""
     
+    var searchTask: Task<Void, Never>? // ***D
+    
     init(repository: NetworkRepository = Network()) {
         self.repository = repository
         //self.loadInitMangas()
     }
     
     func loadInitMangas() {
-        Task {
+        
+        searchTask?.cancel()
+        
+        searchTask = Task {
             do {
                 print ("inicio carga de Temas ...")
-                self.themes = try await repository.getThemes()
+                self.themes = try await repository.getThemes().sorted()
+                print("Temas cargados ... \(self.themes.count)")
                 dataLoaded = true
                 try await getMangasByTheme()
                 //dataLoaded = true
@@ -59,8 +65,9 @@ final class ThemesVM {
         
             await getTotalMangasByTheme(theme: theme)
             self.randomPage = Int.random(in: 1...Int((Double(self.totalMangasByTheme) / Double(self.stepPer)).rounded(.up)))
+            print("Total mangas \(theme): \(self.totalMangasByTheme) - Page: \(self.randomPage)")
             let mangas = try await repository.getMangasByTheme(theme: theme, page: self.randomPage, per: 3)
-            self.themesDictionary[theme] = mangas
+            self.themesDictionary[theme] = mangas //.sorted { $0.id < $1.id }
             self.randomPageThemesDictionary[theme] = self.randomPage
         }
     }

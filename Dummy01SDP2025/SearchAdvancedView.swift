@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SearchView: View {
+struct SearchAdvancedView: View {
     @State private var vm = SearchVM()
     
     var body: some View {

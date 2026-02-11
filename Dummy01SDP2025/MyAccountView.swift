@@ -20,6 +20,7 @@ struct MyAccountView: View {
             }
             //.buttonStyle(.plain)
         }
+        .navigationTitle("Mi cuenta")
         .fullScreenCover(isPresented: $vm.showLogin) {
             SignInView()
                 .environment(MainVM())

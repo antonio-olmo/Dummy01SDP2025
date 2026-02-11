@@ -39,16 +39,16 @@ struct Manga: Codable, Identifiable, Hashable {
     let background: String?
     let chapters: Int?
     let titleJapanese: String?
-    let genres: [String]//[Genre]    
+    let genres: /*[String]*/[Genre]
     let endDate: String? //Date?
 }
 
 enum Status: String, Codable {
-    case publishing = "currently_publishing"
-    case discontinued
-    case on_hiatus
-    case finished
-    case none
+    case currently_publishing = "En publicación"
+    case discontinued = "Interrumpida"
+    case on_hiatus = "En pausa"
+    case finished = "Finalizada"
+    case none = "Desconocido"
 }
 
 struct Author: Codable, Identifiable, Hashable {
@@ -80,6 +80,37 @@ struct Genre: Codable, Identifiable, Hashable {
     let genre: String
 }
 
+// Collection
+
+struct UserCollection: Codable, Identifiable {
+    
+    let id: String
+    let manga: Manga
+    let volumesOwned: [Int]
+    let completeCollection: Bool
+    let readingVolume: Int
+}
+
+struct NewUserCollection: Codable {
+    
+    var manga: Int
+    var volumesOwned: [Int]
+    var completeCollection: Bool
+    var readingVolume: Int
+}
+
+struct TitleSearch: Codable {
+    
+    var searchContains: Bool
+    var searchTitle: String
+}
+
+struct AuthorSearch: Codable {
+    
+    var searchContains: Bool
+    var searchAuthorLastName: String
+}
+
 extension Manga {
     /*static let testMangaTheme: [String:[Manga]] = [
         "Romantic": [
@@ -95,7 +126,7 @@ extension Manga {
             mainPicture: "https://cdn.myanimelist.net/images/manga/1/262978l.jpg",
             sypnosis: "Every year, a class is randomly chosen to be placed in a deserted area where they are forced to kill each other in order to survive. Initially believing to be on a graduation trip, Shuuya Nanahara and the rest of Shiroiwa Junior High's Class B find that they have been chosen to participate in this game of life and death known as The Program.\n\nWaking up to the realization that they have been quarantined on an island, the 42 students discover they have been fitted with metal collars which will detonate if certain conditions are not met. In order to obtain freedom, they must slaughter everyone else by whatever means necessary, and the last one standing is deemed the winner. As each member of the class heads down their own path, Shuuya makes it his goal to get off the island without playing the game in order to put an end to this madness once and for all.\n\n[Written by MAL Rewrite]",
             title: "Battle Royale",
-            volumes: 15,
+            volumes: nil,
             startDate: "2000-01-01T00:00:00Z",
             status: .finished,
             authors: [
@@ -114,7 +145,12 @@ extension Manga {
             background: "Battle Royale is an adaptation of Koushun Takami's novel of the same name which was published in April 1999 (and later published in English by VIZ Media). The novel was adapted into a live-action film the following year and became one of Japan's highest grossing films, though it was condemned by the National Diet.",
             chapters: 119,
             titleJapanese: "バトル・ロワイアル",
-            genres: ["Action", "Drama", "Horror", "Suspense"],
+            //genres: ["Action", "Drama", "Horror", "Suspense"],
+            genres: [
+                Genre(id: UUID(uuidString: "1C260BC4-981D-4D5E-89DF-71C6F68E1A00")!, genre: "Adventure"),
+                Genre(id: UUID(uuidString: "1C260BC4-981D-4D5E-89DF-71C6F68E1A01")!, genre: "Supernatural"),
+                Genre(id: UUID(uuidString: "1C260BC4-981D-4D5E-89DF-71C6F68E1A01")!, genre: "Sci-Fi")
+            ],
             endDate: "2005-01-01T00:00:00Z"
         ),
         Manga(
@@ -141,7 +177,12 @@ extension Manga {
             background: "An anime adaptation was planned for Alive: Saishuu Shinkateki Shounen and was to be produced by anime studio , but the production was cancelled in 2010 when the studio was delisted from the Tokyo Stock Exchange.",
             chapters: 83,
             titleJapanese: "アライブ 最終進化的少年",
-            genres: ["Adventure", "Supernatural", "Sci-Fi"],
+            //genres: ["Adventure", "Supernatural", "Sci-Fi"],
+            genres: [
+                Genre(id: UUID(uuidString: "1C260BC4-981D-4D5E-89DF-71C6F68E1A00")!, genre: "Adventure"),
+                Genre(id: UUID(uuidString: "1C260BC4-981D-4D5E-89DF-71C6F68E1A01")!, genre: "Supernatural"),
+                Genre(id: UUID(uuidString: "1C260BC4-981D-4D5E-89DF-71C6F68E1A01")!, genre: "Sci-Fi")
+            ],
             endDate: "2010-02-06T00:00:00Z"
         ),
         Manga(
@@ -167,7 +208,12 @@ extension Manga {
             background: "Ibara no Ou was published in English as King of Thorn by Tokyopop from June 12, 2007 to November 4, 2008.",
             chapters: 37,
             titleJapanese: "いばらの王",
-            genres: ["Action", "Drama", "Sci-Fi"],
+            //genres: ["Action", "Drama", "Sci-Fi"],
+            genres: [
+                Genre(id: UUID(uuidString: "1C260BC4-981D-4D5E-89DF-71C6F68E1A00")!, genre: "Adventure"),
+                Genre(id: UUID(uuidString: "1C260BC4-981D-4D5E-89DF-71C6F68E1A01")!, genre: "Supernatural"),
+                Genre(id: UUID(uuidString: "1C260BC4-981D-4D5E-89DF-71C6F68E1A01")!, genre: "Sci-Fi")
+            ],
             endDate: "2005-09-12T00:00:00Z"
         )
     ]

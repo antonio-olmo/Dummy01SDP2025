@@ -20,7 +20,10 @@ struct ListsView: View {
                     
         Picker("Select an item", selection: $selectedItem) {
             ForEach(items, id: \.self) { item in
-                Text(item).tag(item)
+                HStack {
+                    //Image(systemName: "figure.and.child.holdinghands")
+                    Text(item)/*.tag(item)*/
+                }
             }
         }
         .pickerStyle(.segmented)
@@ -47,14 +50,14 @@ struct ListsView: View {
         
         var body: some View {
             
-            NavigationStack {
+            //NavigationStack {
                     
                 ScrollView {
                     LazyVStack (alignment: .center) {
                         
                         //ListThemesView(vm: vm)
                         
-                        ForEach(vm.themes.sorted(), id: \.self) { item in
+                        ForEach(vm.themes/*.sorted()*/, id: \.self) { item in
                             NavigationLink(value: item) {
                                 MangaListRow(list: item, listsDictionary: vm.themesDictionary)
                             }
@@ -89,7 +92,7 @@ struct ListsView: View {
                 .refreshable {
                     vm.loadInitMangas()
                 }
-            }
+            //}
             .onAppear {
                 if !vm.dataLoaded {
                     vm.loadInitMangas()
@@ -104,14 +107,14 @@ struct ListsView: View {
         
         var body: some View {
             
-            NavigationStack {
+            //NavigationStack {
                 
                 ScrollView {
                     LazyVStack (alignment: .center) {
                         
                         //ListThemesView(vm: vm)
                         
-                        ForEach(vm.genres.sorted(), id: \.self) { item in
+                        ForEach(vm.genres/*.sorted()*/, id: \.self) { item in
                             NavigationLink(value: item) {
                                 MangaListRow(list: item, listsDictionary: vm.genresDictionary)
                             }
@@ -146,7 +149,7 @@ struct ListsView: View {
                 .refreshable {
                     vm.loadInitMangas()
                 }
-            }
+            //}
             .onAppear {
                 if !vm.dataLoaded {
                     vm.loadInitMangas()
@@ -161,14 +164,14 @@ struct ListsView: View {
         
         var body: some View {
             
-            NavigationStack {
+            //NavigationStack {
                 
                 ScrollView {
                     LazyVStack (alignment: .center) {
                         
                         //ListThemesView(vm: vm)
                         
-                        ForEach(vm.demographics.sorted(), id: \.self) { item in
+                        ForEach(vm.demographics/*.sorted()*/, id: \.self) { item in
                             NavigationLink(value: item) {
                                 MangaListRow(list: item, listsDictionary: vm.demographicsDictionary)
                             }
@@ -204,7 +207,7 @@ struct ListsView: View {
                     vm.loadInitMangas()
                 }
                 
-            }
+            //}
             .onAppear {
                 if !vm.dataLoaded {
                     vm.loadInitMangas()

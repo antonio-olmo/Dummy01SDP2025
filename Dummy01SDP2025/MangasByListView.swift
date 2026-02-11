@@ -15,7 +15,7 @@ struct MangasByListView: View {
     var body: some View {
         
             ScrollView {
-                LazyVStack (alignment: .center) {
+                LazyVStack  {
                     
                     
                     

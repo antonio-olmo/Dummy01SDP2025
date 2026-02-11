@@ -13,194 +13,41 @@
 //
 
 import SwiftUI
+import SwiftData
 
-struct AddMangaView: View {
+/*struct FavouriteMangaView: View {
     
     //@FocusState private var isTextFieldFocused: Bool
     
     @Environment(\.dismiss) private var dismiss
-    
-    @State var vmCover = CoverVM()
-    @State var vm: AddMangaVM
-    
-    @Binding var reload: Bool
-    
+    @Query var mangas: [MangaData]
+        
     var body: some View {
             
-        NavigationStack {
+        //NavigationStack {
             
-            Form {
-                
-                if vm.isSliderEnabled {
-                    
-                    Section {
-                        
-                        Slider(
-                            value: $vm.readingVolume,
-                            in: 0...Double(vm.maxVolumes),
-                            step: 1
-                        )
-                        //.disabled(!vm.isSliderEnabled)
-                        
-                        Text(Int(vm.readingVolume) == 0 ? "Selecciona un volumen" : "Volumen: \(Int(vm.readingVolume))")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                        
-                    } header: {
-                        Text(vm.maxVolumes == 1 ? "Volumen en lectura" : "Volumen en lectura de los \(vm.maxVolumes)")
-                    } footer: {
-                        Text("Desliza para seleccionar el volumen que estás leyendo.")
-                    }
-                    
-                } else {
-                    //No hay volúmenes
-                    Section {
-                        
-                        TextField("Escribe el número que estás leyendo", text: $vm.readingVolumeText)
-                            .keyboardType(.numberPad)
-                            //.focused($isTextFieldFocused)
-                        
-                    } header: {
-                        Text("Volumen en lectura")
-                    } footer: {
-                        Text("No hay info sobre volúmenes.")
-                    }
-                }
-                
-                
-                // Comprados
-                if vm.isSliderEnabled {
-                    
-                    Section {
-                        
-                        HStack(spacing: 12) {
-                            Slider(
-                                value: $vm.currentVolume,
-                                in: 0...Double(vm.maxVolumes),
-                                step: 1
-                            )
-                            //.disabled(!vm.isSliderEnabled)
-                            
-                            //if vm.isSliderEnabled {
-                            Button {
-                                vm.addVolume()
-                            } label: {
-                                Image(systemName: "plus")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(.white)
-                                    .frame(width: 44, height: 44)
-                                    .background(.blue, in: Circle())
-                            }
-                            /*} else {
-                             Image(systemName: "plus")
-                             .font(.title3)
-                             .fontWeight(.semibold)
-                             .foregroundStyle(.white)
-                             .frame(width: 44, height: 44)
-                             .background(.gray, in: Circle())
-                             .opacity(0.5)
-                             }*/
+            ScrollView {
+                VStack (alignment: .leading) {
+                    ForEach(mangas) { favouriteManga in
+                        VStack {
+                            Text(favouriteManga.title)
+                            Text("\(favouriteManga.id)")
+                                .font(.footnote)
                         }
-                        
-                        // Current Volume Display
-                        Text(Int(vm.currentVolume) == 0 ? "Selecciona un volumen" : "Volumen: \(Int(vm.currentVolume))")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                        
-                        if !vm.addedVolumes.isEmpty {
-                            Section {
-                                VStack(alignment: .leading, spacing: 12) {
-                                    Text("Volúmenes añadidos:")
-                                        .font(.subheadline)
-                                        .foregroundStyle(.secondary)
-                                    
-                                    LazyVGrid(
-                                        columns: [GridItem(.adaptive(minimum: 50), spacing: 6)],
-                                        alignment: .leading,
-                                        spacing: 8
-                                    ) {
-                                        ForEach(vm.addedVolumes, id: \.self) { volume in
-                                            Button {
-                                                vm.removeVolume(volume)
-                                            } label: {
-                                                Text("\(volume)")
-                                                    .font(.callout)
-                                                    .fontWeight(.medium)
-                                                    .foregroundStyle(.blue)
-                                                //.padding(.horizontal, 16)
-                                                    .frame(width: 44)
-                                                    .padding(.vertical, 8)
-                                                    .background(
-                                                        RoundedRectangle(cornerRadius: 12)
-                                                            .fill(.blue.opacity(0.1))
-                                                            .strokeBorder(.blue.opacity(0.3), lineWidth: 1)
-                                                    )
-                                            }
-                                            .buttonStyle(.plain)
-                                        }
-                                    }
-                                    .padding(.leading, 10)
-                                }
-                            }
-                        }
-                        
-                    } header: {
-                        Text(vm.maxVolumes == 1 ? "Volumen comprado" : "Volúmenes comprados de los \(vm.maxVolumes)")
-                    } footer: {
-                        Text("Desliza para seleccionar un volumen y pulsa + para añadirlo. Toca un número para eliminarlo.")
                     }
-                    
-                } else {
-                    Section {
-                        TextField("Escribe números separados por coma", text: $vm.addedVolumesText)
-                            .keyboardType(.decimalPad)
-                            //.focused($isTextFieldFocused)
-                    } header: {
-                        Text("Volúmenes comprados")
-                    } footer: {
-                        Text("No hay info sobre volúmenes.")
-                    }
-                }
-                
-                Section {
-                    Toggle("Tengo la colección completa", isOn: $vm.completeCollection)
-                    
-                } header: {
-                    Text("Colección")
                 }
             }
-            //.navigationTitle(vm.mangaTitle.isEmpty ? "Nuevo Manga" : vm.mangaTitle)
-            .navigationTitle(vm.mangaCollection.manga.title)
+            .safeAreaPadding()
+            .navigationTitle("Tu colección de Mangas")
             .navigationBarTitleDisplayMode(.inline)
-            /*.onTapGesture {
-             isTextFieldFocused = false
-             }*/
-            .scrollDismissesKeyboard(.interactively)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancelar") {
-                        // Handle cancel
+                    Button("cerrar") {
+                        dismiss()
                     }
                 }
-                
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Guardar") {
-                        Task {
-                            await vm.saveManga()
-                            if vm.collectionSaved {
-                                reload.toggle()
-                                dismiss()
-                            }
-                        }
-                    }
-                    //.disabled(!vm.isFormValid)
-                }
             }
-            .onAppear {
-                vmCover.getImage(cover: URL(string: .getStringMainPicture(mainPicture: vm.mangaCollection.manga.mainPicture ?? "")))
-            }
-        }
+        //}
     }
 }
 
@@ -216,5 +63,151 @@ struct AddMangaView: View {
     )
     let detailVM = AddMangaVM(mangaCollection: userCollection)
     AddMangaView(vm: detailVM, reload: .constant(false))
+}*/
+
+struct FavouriteMangaView: View {
+    
+    @Environment(\.dismiss) private var dismiss
+    @Query var mangas: [MangaData]
+    
+    @State private var currentIndex: Int = 0
+    
+    var body: some View {
+        
+        NavigationStack {
+            GeometryReader { geometry in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack(spacing: 30) {
+                        ForEach(mangas) { favouriteManga in
+                            
+                            MangaCardView(manga: favouriteManga, size: geometry.size)
+                                .containerRelativeFrame(.horizontal)
+                                .scrollTransition { content, phase in
+                                    content
+                                        .opacity(phase.isIdentity ? 1.0 : 0.7)
+                                        .scaleEffect(phase.isIdentity ? 1.0 : 0.85)
+                                        .rotation3DEffect(
+                                            .degrees(phase.value * 15),
+                                            axis: (x: 0, y: 1, z: 0)
+                                        )
+                                }
+                        }
+                    }
+                    .scrollTargetLayout()
+                }
+                .scrollTargetBehavior(.viewAligned)
+                .contentMargins(.horizontal, 40, for: .scrollContent)
+            }
+            .navigationTitle("Premiere (Favoritos)")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cerrar") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .presentationBackground {
+            LinearGradient(
+                colors: [
+                    Color(red: 1.0, green: 0.95, blue: 0.85),    // Durazno claro
+                    Color(red: 0.85, green: 0.75, blue: 0.95),   // Lavanda
+                    Color(red: 0.70, green: 0.85, blue: 1.0)     // Azul cielo
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+    }
+}
+
+
+struct MangaCardView: View {
+    let manga: MangaData
+    let size: CGSize
+    
+    var body: some View {
+        ZStack(alignment: .center) {
+            // Imagen de fondo del manga
+            MangaCoverView(urlString: manga.mainPicture ?? "", standarHeight: size.height * 0.68)
+                //.frame(height: size.height * 2.5 )
+                .clipped()
+                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            
+            // Overlay oscuro para mejor legibilidad
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color.black.opacity(0.3),
+                            Color.black.opacity(0.5),
+                            Color.black.opacity(0.7)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .frame(width: size.width * 0.9)
+            
+            // Título en el centro
+            VStack(spacing: 12) {
+                Spacer()
+                
+                Text(manga.title)
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(3)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(.ultraThinMaterial)
+                            .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: 5)
+                    )
+                
+                if let englishTitle = manga.titleEnglish {
+                    Text(englishTitle)
+                        .font(.system(size: 18, weight: .medium, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.9))
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        .background(
+                            Capsule()
+                                .fill(.ultraThinMaterial.opacity(0.8))
+                        )
+                }
+                
+                Spacer()
+            }
+        }
+        .frame(height: size.height * 0.8)
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .shadow(color: .black.opacity(0.4), radius: 20, x: 0, y: 10)
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(0.6),
+                            Color.white.opacity(0.3),
+                            Color.white.opacity(0.1)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 2
+                )
+        )
+    }
+}
+
+
+
+#Preview {
+    //FavouriteMangaView(mangas: MangaData.testMangas[0])
 }
 

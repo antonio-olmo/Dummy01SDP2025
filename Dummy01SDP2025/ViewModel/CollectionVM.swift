@@ -7,72 +7,64 @@
 
 import SwiftUI
 
-@Observable
-@MainActor
-final class ThemesVM {
+@Observable @MainActor
+final class CollectionVM {
     
     let repository: NetworkRepository
+    let keychainManager: KeychainManager
     
-    let stepPer = 20
-    var randomPage = 1
+    var userCollection: [UserCollection] = []
         
-    //@ObservationIgnored
-    //@AppStorage("totalThemes") private var totalThemes = 0
+    var state: ViewState = .loading
     
-    var totalMangasByTheme = 0
-    
-    var themes: [String] = []
-    var themesDictionary : [String:[Manga]] = [:]
-    var randomPageThemesDictionary : [String:Int] = [:]
-    
-    var dataLoaded = false
+    var goLogin = false
     
     var showError = false
     var errorMsg = ""
     
-    init(repository: NetworkRepository = Network()) {
+    init(repository: NetworkRepository = Network(), keychainManager: KeychainManager = KeychainManager.shared) {
         self.repository = repository
+        self.keychainManager = keychainManager
         //self.loadInitMangas()
     }
     
     func loadInitMangas() {
+        
         Task {
+            
             do {
-                print ("inicio carga de Temas ...")
-                self.themes = try await repository.getThemes()
-                dataLoaded = true
-                try await getMangasByTheme()
-                //dataLoaded = true
-                print ("Fin de la carga: \(themes.count) temas")
+                try await self.getCollection()
+            } catch KeychainManager.KeychainError.itemNotFound {
+                print("No hay token. Vamos al login ...")
+                try? keychainManager.deleteAuthToken()
+                goLogin = true
             } catch {
-                errorMsg = error.localizedDescription
-                showError.toggle()
-                print(error)
+                print("Error al verificar token: \(error.localizedDescription)")
+                // Si hay error, cerramos la sesión y para el login
+                try? keychainManager.deleteAuthToken()
+                goLogin = true
             }
         }
     }
     
-    func getMangasByTheme() async throws {
-        guard themes.count > 0 else { return }
+    func getCollection() async throws {
         
-        for theme in self.themes {
+        // Intentar obtener el token del Keychain
+        let token = try keychainManager.getAuthToken()
         
-            await getTotalMangasByTheme(theme: theme)
-            self.randomPage = Int.random(in: 1...Int((Double(self.totalMangasByTheme) / Double(self.stepPer)).rounded(.up)))
-            let mangas = try await repository.getMangasByTheme(theme: theme, page: self.randomPage, per: 3)
-            self.themesDictionary[theme] = mangas
-            self.randomPageThemesDictionary[theme] = self.randomPage
-        }
-    }
-    
-    func getTotalMangasByTheme(theme: String) async {
+        let auth = "Bearer \(token)"
+        var headers = [[String: String]]()
+        headers.append(["Authorization": auth])
+        
         do {
-            self.totalMangasByTheme = try await repository.getTotalList(url: .getMangasByTheme(theme: theme, page: 1, per: 1))
+            self.userCollection = try await repository.getCollection(headers: headers)
+            print("Colección: \(self.userCollection.count)")
         } catch {
             errorMsg = error.localizedDescription
             showError.toggle()
-            print(error)
+            print("Collection: \(error)")
         }
     }
 }
+
 

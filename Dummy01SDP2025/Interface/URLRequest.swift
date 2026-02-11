@@ -8,12 +8,18 @@
 import Foundation
 
 extension URLRequest {
-    static func get(url: URL) -> URLRequest {
+    static func get(url: URL, headers: [[String : String]] = []) -> URLRequest {
         var request = URLRequest(url: url)
         request.timeoutInterval = 60
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        //request.setValue("Bearer lajsdñkajsdñlkjasdñlkjasñdlkj", forHTTPHeaderField: "Authorization")
+        
+        headers.forEach { header in
+            if let myHeader = header.first {
+                request.setValue(myHeader.value, forHTTPHeaderField: myHeader.key)
+            }
+        }
+        
         return request
     }
     
@@ -38,6 +44,22 @@ extension URLRequest {
         var request = URLRequest(url: url)
         
         request.httpMethod = method
+        request.timeoutInterval = 60
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        
+        headers.forEach { header in
+            if let myHeader = header.first {
+                request.setValue(myHeader.value, forHTTPHeaderField: myHeader.key)
+            }
+        }
+        
+        return request
+    }
+    
+    static func delete(url: URL, headers: [[String : String]] = []) -> URLRequest {
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
         request.timeoutInterval = 60
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")

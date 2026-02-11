@@ -79,6 +79,21 @@ struct GenreDTO: Codable, Identifiable {
     let genre: String
 }
 
+// Collection
+
+struct UserCollectionDTO: Codable {
+    let manga: MangaDTO
+    let volumesOwned: [Int]
+    let user: UserIdDTO
+    let completeCollection: Bool
+    let readingVolume: Int
+    let id: String
+}
+
+struct UserIdDTO: Codable {
+    let id: String
+}
+
 extension AuthorDTO {
     var toAuthor: Author {
         Author(
@@ -113,24 +128,34 @@ extension MangaDTO {
         
         Manga(
             id: id,
-            url: URL(string: url ?? ""),
+            url: URL(string: url?.replacingOccurrences(of: "\"", with: "") ?? ""),
             score: score,
             mainPicture: mainPicture,
-            sypnosis: sypnosis,
+            sypnosis: sypnosis ?? "",
             title: title,
             volumes: volumes,
             startDate: startDate,
-            status: Status(rawValue: status) ?? Status.none,
+            status: convertStatus(from: status),
             authors: authors.map { $0.toAuthor },
             themes: themes.map { $0.toTheme },
             demographics: demographics.map { $0.toDemographic },
             titleEnglish: titleEnglish,
-            background: background ?? "",
+            background: background,
             chapters: chapters ?? 0,
             titleJapanese: titleJapanese,
-            genres: genres.map { $0.toGenre.genre },
+            genres: genres.map { $0.toGenre/*.genre*/ },
             endDate: endDate
         )
+    }
+    
+    private func convertStatus(from apiStatus: String) -> Status {
+        switch apiStatus {
+        case "currently_publishing": return .currently_publishing
+        case "discontinued": return .discontinued
+        case "on_hiatus": return .on_hiatus
+        case "finished": return .finished
+        default: return .none
+        }
     }
     
     /*func getURL(mainPicture: String?) -> String {
@@ -141,4 +166,17 @@ extension MangaDTO {
             return ""
         }
     }*/
+}
+
+extension UserCollectionDTO {
+    var toUserCollection: UserCollection {
+        
+        UserCollection(
+            id: id,
+            manga:manga.toManga,
+            volumesOwned: volumesOwned,
+            completeCollection: completeCollection,
+            readingVolume: readingVolume
+        )
+    }
 }

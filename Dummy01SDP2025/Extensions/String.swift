@@ -16,4 +16,20 @@ extension String {
             return ""
         }
     }
+    
+    func formatMangaDate() -> String {
+        let isoFormatter = ISO8601DateFormatter()
+        guard let date = isoFormatter.date(from: self) else { return "Desconocida" }
+        
+        let formatted = date.formatted( // No queremos horas ...
+            .dateTime
+                .day(.twoDigits)
+                .month(.twoDigits)
+                .year()
+        )
+        
+        // Quitamos las barras, jejeje
+        return formatted
+            .replacing("/", with: "-")
+    }
 }

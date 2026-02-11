@@ -13,16 +13,21 @@ struct ContentView: View {
     
     var body: some View {
             
-        NavigationStack {
+        //NavigationStack {
             
             ScrollView {
-                VStack (alignment: .leading) {
+                LazyVStack  {
                     ForEach(vm.mangas) { manga in
                         NavigationLink(value: manga) {
                             MangaRow(manga: manga)
                         }
                     }
                 }
+            }
+            .refreshable {
+                
+                vm.loadInitMangas()
+                
             }
             .safeAreaPadding()
             .navigationTitle("Mangas para ti ...")
@@ -42,15 +47,16 @@ struct ContentView: View {
              }
              }
              .toolbarRole(.editor)*/            
+        //}
+        .onAppear {
+            if !vm.dataLoaded {
+                vm.loadInitMangas()
+            }
         }
         /*.task(priority: .high) {
             await vm.getMangas()
         }*/
-        .refreshable {
-            
-            vm.loadInitMangas()
-            
-        }
+        
     }
 }
 

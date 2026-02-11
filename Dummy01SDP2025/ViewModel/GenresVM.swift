@@ -30,16 +30,21 @@ final class GenresVM {
     var showError = false
     var errorMsg = ""
     
+    var searchTask: Task<Void, Never>? // ***D
+    
     init(repository: NetworkRepository = Network()) {
         self.repository = repository
         //self.loadInitMangas()
     }
     
     func loadInitMangas() {
-        Task {
+        
+        searchTask?.cancel()
+        
+        searchTask = Task {        
             do {
                 print ("inicio carga de géneros ...")
-                self.genres = try await repository.getGenres()
+                self.genres = try await repository.getGenres().sorted()
                 dataLoaded = true
                 try await getMangasByGenre()
                 //dataLoaded = true

@@ -13,6 +13,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct Dummy01SDP2025App: App {
@@ -46,16 +47,20 @@ struct Dummy01SDP2025App: App {
             .animation(.easeInOut(duration: 0.3), value: vm.isVerifying)
             .task {
                 // Verificación inicial al lanzar la app
+                print("checkInitialAuthentication")
                 await vm.checkInitialAuthentication()
             }
         }
         .onChange(of: scenePhase) { oldPhase, newPhase in
             switch newPhase {
             case .active:
-                print("Estamos en Fore !!!")
+                print("Estamos en Fore !!!!")
+                
                 // Solo verificar si ya terminó la inicialización
-                if !vm.isInitializing {
-                    vm.onAppEnterForeground()
+                Task {
+                    if !vm.isInitializing {
+                        await vm.onAppEnterForeground()
+                    }
                 }
             case .inactive:
                 print("App en estado INACTIVE")
@@ -65,6 +70,7 @@ struct Dummy01SDP2025App: App {
                 break
             }
         }
+        .modelContainer(for: MangaData.self)
     }
     
     struct LoadingView: View {

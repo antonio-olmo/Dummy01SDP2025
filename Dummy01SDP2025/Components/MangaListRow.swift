@@ -51,39 +51,6 @@ struct MangaListRow: View {
     }
     
     /*struct MangaCoverView: View {
-        let manga: Manga
-        @State private var vm = CoverVM()
-        
-        var body: some View {
-            Group {
-                
-                if let image = vm.image {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 140)
-                        .clipShape(Rectangle())
-                } else {
-                    placeholder
-                }
-                
-            }
-            .onAppear {
-                vm.getImage(cover: URL(string: .getStringMainPicture(mainPicture: manga.mainPicture)))
-            }
-        }
-        
-        private var placeholder: some View {
-            Image(systemName: "apple.books.pages.fill")
-                .font(.largeTitle)
-                .frame(width: 90, height: 140)
-                //.clipShape(.circle)
-                .background(.gray.opacity(0.3), in: .rect(cornerRadius: 11))
-                //.background(.red.opacity(0.1), in: .circle)
-        }
-    }*/
-    
-    struct MangaCoverView: View {
         let urlString: String
         @State private var vm = CoverVM()
         
@@ -114,7 +81,7 @@ struct MangaListRow: View {
                 .background(.gray.opacity(0.3), in: .rect(cornerRadius: 11))
                 //.background(.red.opacity(0.1), in: .circle)
         }
-    }
+    }*/
 }
 
 #Preview {
