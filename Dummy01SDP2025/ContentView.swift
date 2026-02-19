@@ -9,14 +9,29 @@ import SwiftUI
 
 struct ContentView: View {
     
+    @AppStorage("nickName") var nickName: String = ""
+    
     @State var vm = MangasVM()
     
+    let itemManga: [GridItem] = [GridItem(.adaptive(minimum: 300))]
+    
     var body: some View {
+        
+        ScrollView {
             
-        //NavigationStack {
-            
-            ScrollView {
-                LazyVStack  {
+            if isiPhone {
+                
+                LazyVStack {
+                    ForEach(vm.mangas) { manga in
+                        NavigationLink(value: manga) {
+                            MangaRow(manga: manga)
+                        }
+                    }
+                }
+                
+            } else {
+                
+                LazyVGrid(columns: itemManga) {
                     ForEach(vm.mangas) { manga in
                         NavigationLink(value: manga) {
                             MangaRow(manga: manga)
@@ -24,39 +39,25 @@ struct ContentView: View {
                     }
                 }
             }
-            .refreshable {
-                
-                vm.loadInitMangas()
-                
-            }
-            .safeAreaPadding()
-            .navigationTitle("Mangas para ti ...")
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationDestination(for: Manga.self) { manga in
-                MangaDetailView(manga: manga)
-            }
-            .buttonStyle(.plain)
-            /*.navigationDestination(for: Manga.self) { manga in
-             BookView(book: manga, namespace: namespace)
-             }
-             .toolbar {
-             ToolbarItem(placement: .principal) {
-             Text("Books")
-             .font(.title3)
-             .bold()
-             }
-             }
-             .toolbarRole(.editor)*/            
-        //}
+        }
+        .refreshable {
+            
+            vm.loadInitMangas()
+            
+        }
+        .safeAreaPadding()
+        .navigationTitle(nickName == "" ? "Mangas para ti ..." : "Mangas para \(nickName)")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(for: Manga.self) { manga in
+            MangaDetailView(manga: manga)
+        }
+        .buttonStyle(.plain)
+            
         .onAppear {
             if !vm.dataLoaded {
                 vm.loadInitMangas()
             }
         }
-        /*.task(priority: .high) {
-            await vm.getMangas()
-        }*/
-        
     }
 }
 

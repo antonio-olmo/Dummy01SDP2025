@@ -8,14 +8,15 @@
 import Foundation
 import Security
 
-/// Protocolo para gestionar operaciones con el Keychain
+// Protocolo para gestionar operaciones con el Keychain
 protocol KeychainManaging: Sendable {
-    func save(token: String, forKey key: String) throws
+    func saveToken(token: String, forKey key: String) throws
+    func saveEmail(email: String, forKey key: String) throws
     func retrieve(forKey key: String) throws -> String
     func delete(forKey key: String) throws
 }
 
-/// Manager para gestionar tokens y credenciales en el Keychain del dispositivo
+// Manager para gestionar tokens y credenciales en el Keychain del dispositivo
 final class KeychainManager: KeychainManaging, @unchecked Sendable {
     
     enum KeychainError: LocalizedError {
@@ -49,11 +50,11 @@ final class KeychainManager: KeychainManaging, @unchecked Sendable {
     
     private init() {}
     
-    /// Guarda un token en el Keychain
-    /// - Parameters:
-    ///   - token: El token a guardar
-    ///   - key: La clave única para identificar el token
-    func save(token: String, forKey key: String) throws {
+    // Guarda un token en el Keychain
+    // - Parameters:
+    //   - token: El token a guardar
+    //   - key: La clave única para identificar el token
+    func saveToken(token: String, forKey key: String) throws {
         guard let data = token.data(using: .utf8) else {
             throw KeychainError.invalidData
         }
@@ -79,7 +80,33 @@ final class KeychainManager: KeychainManaging, @unchecked Sendable {
         }
     }
     
-    /// Actualiza un token existente en el Keychain
+    func saveEmail(email: String, forKey key: String) throws {
+        guard let data = email.data(using: .utf8) else {
+            throw KeychainError.invalidData
+        }
+        
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: key,
+            kSecValueData as String: data,
+            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+        ]
+        
+        // Intentar agregar el item
+        let status = SecItemAdd(query as CFDictionary, nil)
+        
+        switch status {
+        case errSecSuccess:
+            return
+        case errSecDuplicateItem:
+            // Si ya existe, lo actualizamos
+            try updateEmail(email: email, forKey: key)
+        default:
+            throw KeychainError.unknown(status)
+        }
+    }
+    
+    // Actualiza un token existente en el Keychain
     private func update(token: String, forKey key: String) throws {
         guard let data = token.data(using: .utf8) else {
             throw KeychainError.invalidData
@@ -101,9 +128,31 @@ final class KeychainManager: KeychainManaging, @unchecked Sendable {
         }
     }
     
-    /// Recupera un token del Keychain
-    /// - Parameter key: La clave del token a recuperar
-    /// - Returns: El token como String
+    // Actualiza un email existente en el Keychain
+    private func updateEmail(email: String, forKey key: String) throws {
+        guard let data = email.data(using: .utf8) else {
+            throw KeychainError.invalidData
+        }
+        
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: key
+        ]
+        
+        let attributes: [String: Any] = [
+            kSecValueData as String: data
+        ]
+        
+        let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
+        
+        guard status == errSecSuccess else {
+            throw KeychainError.unknown(status)
+        }
+    }
+    
+    // Recupera un token del Keychain
+    // - key: La clave del token a recuperar
+    // - devuelve El token como String
     func retrieve(forKey key: String) throws -> String {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -129,8 +178,8 @@ final class KeychainManager: KeychainManaging, @unchecked Sendable {
         }
     }
     
-    /// Elimina un token del Keychain
-    /// - Parameter key: La clave del token a eliminar
+    // Elimina un token del Keychain
+    // key: La clave del token a eliminar
     func delete(forKey key: String) throws {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -144,8 +193,8 @@ final class KeychainManager: KeychainManaging, @unchecked Sendable {
         }
     }
     
-    /// Elimina todos los items del Keychain (útil para logout)
-    func deleteAll() throws {
+    // Elimina todos los items del Keychain (útil para logout)
+    /*func deleteAll() throws {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword
         ]
@@ -155,27 +204,42 @@ final class KeychainManager: KeychainManaging, @unchecked Sendable {
         guard status == errSecSuccess || status == errSecItemNotFound else {
             throw KeychainError.unknown(status)
         }
-    }
+    }*/
 }
 
 extension KeychainManager {
     
-    /// Guarda el token de autenticación
+    // Guarda el token de autenticación
     func saveAuthToken(_ token: String) throws {
-        try save(token: token, forKey: Keys.authToken)
+        try saveToken(token: token, forKey: Keys.authToken)
     }
     
-    /// Recupera el token de autenticación
+    // Guarda el token de autenticación
+    func saveAuthEmail(_ email: String) throws {
+        try saveEmail(email: email, forKey: Keys.userEmail)
+    }
+    
+    // Recupera el token de autenticación
     func getAuthToken() throws -> String {
         try retrieve(forKey: Keys.authToken)
     }
     
-    /// Elimina el token de autenticación
+    // Recupera el email de autenticación
+    func getAuthEmail() throws -> String {
+        try retrieve(forKey: Keys.userEmail)
+    }
+    
+    // Elimina el token de autenticación
     func deleteAuthToken() throws {
         try delete(forKey: Keys.authToken)
     }
     
-    /// Verifica si existe un token de autenticación
+    // Elimina el email de autenticación
+    func deleteAuthEmail() throws {
+        try delete(forKey: Keys.userEmail)
+    }
+    
+    // Verifica si existe un token de autenticación
     var hasAuthToken: Bool {
         do {
             _ = try getAuthToken()

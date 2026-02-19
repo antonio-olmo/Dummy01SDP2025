@@ -48,14 +48,27 @@ struct ListsView: View {
         
         var vm: ThemesVM
         
+        let itemTheme: [GridItem] = [GridItem(.adaptive(minimum: 300))]
+        
         var body: some View {
-            
-            //NavigationStack {
                     
-                ScrollView {
+            ScrollView {
+                
+                if isiPhone {
+                    
                     LazyVStack (alignment: .center) {
                         
-                        //ListThemesView(vm: vm)
+                        ForEach(vm.themes/*.sorted()*/, id: \.self) { item in
+                            NavigationLink(value: item) {
+                                MangaListRow(list: item, listsDictionary: vm.themesDictionary)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    
+                } else {
+                    
+                    LazyVGrid(columns: itemTheme) {
                         
                         ForEach(vm.themes/*.sorted()*/, id: \.self) { item in
                             NavigationLink(value: item) {
@@ -65,34 +78,24 @@ struct ListsView: View {
                         }
                     }
                 }
-                .scrollIndicators(.hidden)
-                .safeAreaPadding()
-                //.padding(.horizontal)
-                .navigationTitle("Mangas por Temas ...")
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationDestination(for: String.self) { item in
-                    //BookView(book: book, namespace: namespace)
-                    
-                    
-                    /*let mangasVM = MangasByThemeVM(
-                     theme: theme,
-                     themeDictionary: vm.themesDictionary,
-                     randomPage: vm.randomPageThemesDictionary[theme] ?? 1
-                     )
-                     MangasByListView(vm: mangasVM)*/
-                    
-                    let mangasVM = MangasByListVM(
-                        item: item,
-                        itemDictionary: vm.themesDictionary,
-                        randomPage: vm.randomPageThemesDictionary[item] ?? 1,
-                        list: 1
-                    )
-                    MangasByListView(vm: mangasVM)
-                }
-                .refreshable {
-                    vm.loadInitMangas()
-                }
-            //}
+            }
+            .scrollIndicators(.hidden)
+            .safeAreaPadding()
+            .navigationTitle("Mangas por Temas ...")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: String.self) { item in
+                
+                let mangasVM = MangasByListVM(
+                    item: item,
+                    itemDictionary: vm.themesDictionary,
+                    randomPage: vm.randomPageThemesDictionary[item] ?? 1,
+                    list: 1
+                )
+                MangasByListView(vm: mangasVM)
+            }
+            .refreshable {
+                vm.loadInitMangas()
+            }
             .onAppear {
                 if !vm.dataLoaded {
                     vm.loadInitMangas()
@@ -105,14 +108,15 @@ struct ListsView: View {
         
         var vm: GenresVM
         
+        let itemGenre: [GridItem] = [GridItem(.adaptive(minimum: 300))]
+        
         var body: some View {
-            
-            //NavigationStack {
                 
-                ScrollView {
+            ScrollView {
+                
+                if isiPhone {
+                    
                     LazyVStack (alignment: .center) {
-                        
-                        //ListThemesView(vm: vm)
                         
                         ForEach(vm.genres/*.sorted()*/, id: \.self) { item in
                             NavigationLink(value: item) {
@@ -121,35 +125,38 @@ struct ListsView: View {
                             .buttonStyle(.plain)
                         }
                     }
-                }
-                .scrollIndicators(.hidden)
-                .safeAreaPadding()
-                //.padding(.horizontal)
-                .navigationTitle("Mangas por Géneros ...")
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationDestination(for: String.self) { item in
-                    //BookView(book: book, namespace: namespace)
                     
+                } else {
                     
-                    /*let mangasVM = MangasByThemeVM(
-                        theme: theme,
-                        themeDictionary: vm.genresDictionary,
-                        randomPage: vm.randomPageGenresDictionary[theme] ?? 1
-                    )
-                    MangasByListView(vm: mangasVM)*/
-                    
-                    let mangasVM = MangasByListVM(
-                        item: item,
-                        itemDictionary: vm.genresDictionary,
-                        randomPage: vm.randomPageGenresDictionary[item] ?? 1,
-                        list: 2
-                    )
-                    MangasByListView(vm: mangasVM)
+                    LazyVGrid(columns: itemGenre) {
+                        ForEach(vm.genres/*.sorted()*/, id: \.self) { item in
+                            NavigationLink(value: item) {
+                                MangaListRow(list: item, listsDictionary: vm.genresDictionary)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
                 }
-                .refreshable {
-                    vm.loadInitMangas()
-                }
-            //}
+            }
+            .scrollIndicators(.hidden)
+            .safeAreaPadding()
+            
+            .navigationTitle("Mangas por Géneros ...")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: String.self) { item in
+                
+                
+                let mangasVM = MangasByListVM(
+                    item: item,
+                    itemDictionary: vm.genresDictionary,
+                    randomPage: vm.randomPageGenresDictionary[item] ?? 1,
+                    list: 2
+                )
+                MangasByListView(vm: mangasVM)
+            }
+            .refreshable {
+                vm.loadInitMangas()
+            }
             .onAppear {
                 if !vm.dataLoaded {
                     vm.loadInitMangas()
@@ -162,14 +169,27 @@ struct ListsView: View {
         
         var vm: DemographicVM
         
+        let itemDemographic: [GridItem] = [GridItem(.adaptive(minimum: 300))]
+        
         var body: some View {
-            
-            //NavigationStack {
                 
-                ScrollView {
+            ScrollView {
+                
+                if isiPhone {
+                    
                     LazyVStack (alignment: .center) {
                         
-                        //ListThemesView(vm: vm)
+                        ForEach(vm.demographics/*.sorted()*/, id: \.self) { item in
+                            NavigationLink(value: item) {
+                                MangaListRow(list: item, listsDictionary: vm.demographicsDictionary)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    
+                } else {
+                    
+                    LazyVGrid(columns: itemDemographic) {
                         
                         ForEach(vm.demographics/*.sorted()*/, id: \.self) { item in
                             NavigationLink(value: item) {
@@ -179,35 +199,24 @@ struct ListsView: View {
                         }
                     }
                 }
-                .scrollIndicators(.hidden)
-                .safeAreaPadding()
-                //.padding(.horizontal)
-                .navigationTitle("Mangas por Demografías ...")
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationDestination(for: String.self) { item in
-                    //BookView(book: book, namespace: namespace)
-                    
-                    
-                    /*let mangasVM = MangasByThemeVM(
-                        theme: theme,
-                        themeDictionary: vm.demographicsDictionary,
-                        randomPage: vm.randomPageDemographicsDictionary[theme] ?? 1
-                    )
-                    MangasByListView(vm: mangasVM)*/
-                    
-                    let mangasVM = MangasByListVM(
-                        item: item,
-                        itemDictionary: vm.demographicsDictionary,
-                        randomPage: vm.randomPageDemographicsDictionary[item] ?? 1,
-                        list: 3
-                    )
-                    MangasByListView(vm: mangasVM)
-                }
-                .refreshable {
-                    vm.loadInitMangas()
-                }
-                
-            //}
+            }
+            .scrollIndicators(.hidden)
+            .safeAreaPadding()
+            .navigationTitle("Mangas por Demografías ...")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: String.self) { item in
+                                    
+                let mangasVM = MangasByListVM(
+                    item: item,
+                    itemDictionary: vm.demographicsDictionary,
+                    randomPage: vm.randomPageDemographicsDictionary[item] ?? 1,
+                    list: 3
+                )
+                MangasByListView(vm: mangasVM)
+            }
+            .refreshable {
+                vm.loadInitMangas()
+            }
             .onAppear {
                 if !vm.dataLoaded {
                     vm.loadInitMangas()

@@ -78,10 +78,11 @@ final class MangasVM {
     
     func getMangas() async {
         do {
-            print("TOTAL MANGAS: \(self.totalMangas)")
             let randomPage = Int.random(in: 1...Int((Double(self.totalMangas) / Double(self.stepPer)).rounded(.up)))
+            //let randomPage = Int.random(in: 1...Int(Double(self.totalMangas)))
             //TODO: Descomentar la de arriba y borrar la de abajo, para mostrar siempre los mismos
             //let randomPage = 1
+            print("TOTAL MANGAS: \(self.totalMangas) - Página: \(randomPage) - Step: \(Double(self.stepPer))")
             self.mangas = try await repository.getMangas(page: randomPage, per: self.stepPer)
             
         } catch {

@@ -30,135 +30,79 @@ struct MangaDetailView: View {
     let manga: Manga
     
     var body: some View {
-    
-        //GeometryReader { geometry in
-            ScrollView {
+        
+        ScrollView {
+            
+            if let image = vmCover.image {
                 
-                if let image = vmCover.image {
+                VStack(spacing: 0) {
                     
-                    VStack(spacing: 0) {
+                    GeometryReader { geometry in
                         
-                        GeometryReader { geometry in
+                        ZStack(alignment: .top) {
+                            // Fondo con imagen estática en B&N con zoom
                             
-                            ZStack(alignment: .top) {
-                                // Fondo con imagen estática en B&N con zoom
-                                //if let image = vmCover.image {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .scaleEffect(1.3) // Zoom potente
-                                    .frame(width: geometry.size.width, height: 492)
-                                    .clipped()
-                                    .grayscale(1.0) // Blanco y negro
-                                    .blur(radius: 3, opaque: true) // Ligero blur para efecto dramático
-                                    .overlay(
-                                        
-                                        // Degradado de blanco a transparente más suave
-                                        LinearGradient(
-                                            stops: [
-                                                .init(color: .white.opacity(1), location: 0.0),
-                                                .init(color: .white.opacity(0.9), location: 0.15),
-                                                .init(color: .white.opacity(0.7), location: 0.3),
-                                                .init(color: .white.opacity(0.4), location: 0.5),
-                                                .init(color: .white.opacity(0.1), location: 0.65),
-                                                .init(color: .clear, location: 0.8),
-                                                .init(color: .white.opacity(0.5), location: 0.9),
-                                                .init(color: Color(white: 1), location: 1)
-                                                
-                                                
-                                            ],
-                                            startPoint: .top,
-                                            endPoint: .bottom
-                                        )
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFill()
+                                .scaleEffect(1.3) // Zoom potente
+                                //.frame(width: geometry.size.width, height: 492) // iPhone
+                                .frame(width: geometry.size.width, height: isiPhone ? 492 : 792)
+                                .clipped()
+                                .grayscale(1.0) // Blanco y negro
+                                .blur(radius: 3, opaque: true) // Ligero blur para efecto dramático
+                                .overlay(
+                                    
+                                    // Degradado de blanco a transparente más suave
+                                    LinearGradient(
+                                        stops: [
+                                            .init(color: .white.opacity(1), location: 0.0),
+                                            .init(color: .white.opacity(0.9), location: 0.15),
+                                            .init(color: .white.opacity(0.7), location: 0.3),
+                                            .init(color: .white.opacity(0.4), location: 0.5),
+                                            .init(color: .white.opacity(0.1), location: 0.65),
+                                            .init(color: .clear, location: 0.8),
+                                            .init(color: .white.opacity(0.5), location: 0.9),
+                                            .init(color: Color(white: 1), location: 1)
+                                        ],
+                                        startPoint: .top,
+                                        endPoint: .bottom
                                     )
-                                    .ignoresSafeArea(edges: .top)
-                                
-                                // Contenido principal
-                                VStack(spacing: 20) {
-                                    Spacer()
-                                        .frame(height: 3)
-                                    
-                                    // Imagen animada principal
-                                    //AnimatedZoomImageView(urlString: manga.mainPicture ?? "")
-                                    AnimatedZoomImageView(image: vmCover.image)
-                                        .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
-                                    
-                                    
-                                    
-                                    // Título y contenido adicional con más espacio
-                                    /*VStack(spacing: 12) {
-                                     Text(manga.title)
-                                     .font(.title)
-                                     .fontWeight(.bold)
-                                     .multilineTextAlignment(.center)
-                                     .padding(.horizontal)
-                                     .padding(.top, 20) // Más separación desde la imagen
-                                     
-                                     // Aquí puedes añadir más información del manga
-                                     Text("Más información del manga...")
-                                     .foregroundStyle(.secondary)
-                                     .padding(.bottom, 50)
-                                     }*/
-                                }
-                                //}
-                            }
-                            
-                            
-                        }
-                        .frame(height: 480)
-                        
-                        mangaInfo
-                    }
-                    
-                } else {
-                        
-                    /*ZStack (alignment: .center) {
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color.purple.opacity(0.2), Color.blue.opacity(0.2)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
                                 )
-                            )
-                        
-                        Image(systemName: "apple.books.pages.fill")
-                            .font(.system(size: 60))
-                            .foregroundStyle(.secondary.opacity(0.8))
+                                .ignoresSafeArea(edges: .top)
+                            
+                            // Contenido principal
+                            VStack(spacing: 20) {
+                                Spacer()
+                                    .frame(height: 3)
+                                
+                                // Imagen animada principal
+                                AnimatedZoomImageView(image: vmCover.image)
+                                    .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
+                            }
+                        }
                     }
-                    .frame(width: 100, height: 150)
-                    /*.overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .strokeBorder(
-                                LinearGradient(
-                                    colors: [
-                                        Color.white.opacity(0.6),
-                                        Color.white.opacity(0.3),
-                                        Color.purple.opacity(0.4),
-                                        Color.blue.opacity(0.5)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 2
-                            )
-                    )*/
-                    .shadow(color: Color(red: 0.3, green: 0.2, blue: 0.5).opacity(0.7), radius: 10, x: 0, y: 10)
-                    //.shadow(color: .black.opacity(0.5), radius: 0, x: 0, y: 15)*/
+                    //.frame(height: 480) // iPhone
+                    .frame(height: isiPhone ? 480 : 780)
                     
-                    VStack {
-                        placeholder
-                        mangaInfo
-                    }
+                    mangaInfo
                 }
                 
+            } else {
                 
+                VStack {
+                    placeholder
+                    mangaInfo
+                }
             }
-            .scrollIndicators(.hidden)
-            .navigationTitle(manga.title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItemGroup(placement: .topBarTrailing) {
+        }
+        .scrollIndicators(.hidden)
+        .navigationTitle(manga.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                
+                if vm.dataLoaded {
                     
                     if !vm.inCollection {
                         
@@ -178,25 +122,42 @@ struct MangaDetailView: View {
                         } else {
                             
                             Button {
-                                print("imagen: \(manga.mainPicture ?? "nada")")
-                                let manga = MangaData(id: manga.id, title: manga.title, mainPicture: .getStringMainPicture(mainPicture: manga.mainPicture), sypnosis: manga.sypnosis)
                                 
-                                modelContext.insert(manga)
-                                isFavourite = true
+                                do {
+                                    if (try insertFavouriteManga(MangaData(id: manga.id, title: manga.title, mainPicture: .getStringMainPicture(mainPicture: manga.mainPicture), sypnosis: manga.sypnosis))) {
+                                        isFavourite = true
+                                    }
+                                } catch {
+                                    print("ERROR en la inserción de favoritos")
+                                }
                                 
                             } label: {
                                 Image(systemName: "star.fill")
                             }
                         }
-                    }
-                    
-                    Button {
-                        showAddManga.toggle()
-                    } label: {
-                        !vm.inCollection ? Image(systemName: "plus") : Image(systemName: "pencil")
-                    }
-                    
-                    if vm.inCollection {
+                        
+                        Button {
+                            showAddManga.toggle()
+                        } label: {
+                            Image(systemName: "plus")
+                        }
+                        //}
+                        
+                        /*Button {
+                         showAddManga.toggle()
+                         } label: {
+                         !vm.inCollection ? Image(systemName: "plus") : Image(systemName: "pencil")
+                         }*/
+                        
+                        //if vm.inCollection {
+                    } else {
+                        
+                        Button {
+                            showAddManga.toggle()
+                        } label: {
+                            Image(systemName: "pencil")
+                        }
+                        
                         Button {
                             vm.alertMessage = "ATENCIÓN: Vas a borrar este manga de tu colección."
                             vm.showAlert.toggle()
@@ -206,66 +167,66 @@ struct MangaDetailView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showAddManga) {
-                if let mangaCollection = vm.mangaCollection {
-                    
-                    let detailVM = AddMangaVM(mangaCollection: mangaCollection)
-                    AddMangaView(vm: detailVM, reload: $reload)
-                } else {
-                    let userCollection = UserCollection(
-                        id: "",
-                        manga: manga,
-                        volumesOwned: [],
-                        completeCollection: false,
-                        readingVolume: 0
-                    )
-                    let detailVM = AddMangaVM(mangaCollection: userCollection)
-                    AddMangaView(vm: detailVM, reload: $reload)
+        }
+        .sheet(isPresented: $showAddManga) {
+            if let mangaCollection = vm.mangaCollection {
+                
+                let detailVM = AddMangaVM(mangaCollection: mangaCollection)
+                AddMangaView(vm: detailVM, reload: $reload)
+            } else {
+                let userCollection = UserCollection(
+                    id: "",
+                    manga: manga,
+                    volumesOwned: [],
+                    completeCollection: false,
+                    readingVolume: 0
+                )
+                let detailVM = AddMangaVM(mangaCollection: userCollection)
+                AddMangaView(vm: detailVM, reload: $reload)
+            }
+        }
+        .alert("Borrado de Manga", isPresented: $vm.showAlert) {
+            Button("Cancelar", role: .cancel) {}
+            
+            Button("Borrar", role: .destructive) {
+                Task {
+                    await vm.deleteMangaCollection(id: manga.id)
+                    //if vm.mangaDeletedFromCollection {
+                        //reload.toggle()
+                        dismiss()
+                    //}
                 }
             }
-            .alert("Borrado de Manga", isPresented: $vm.showAlert) {
-                Button("Cancelar", role: .cancel) {}
-                
-                Button("Borrar", role: .destructive) {
-                    Task {
-                        await vm.deleteMangaCollection(id: manga.id)
-                        //if vm.mangaDeletedFromCollection {
-                            //reload.toggle()
-                            dismiss()
-                        //}
-                    }
-                }
-            } message: {
-                Text(vm.alertMessage)
+        } message: {
+            Text(vm.alertMessage)
+        }
+        .onAppear {
+            
+            do {
+                self.isFavourite = try self.getFavouriteManga(manga.id)
+            } catch {
+                self.isFavourite = false
             }
-            .onAppear {
-                
-                do {
-                    self.isFavourite = try self.getFavouriteManga(manga.id)
-                } catch {
-                    self.isFavourite = false
-                }
-                
-                japaneseTitle = vm.japaneseTitle(
-                    manga.titleJapanese,
-                    manga.titleEnglish,
-                    manga.title)
-                if let mangaURL = manga.url {
-                    mangaLink = vm.linkText(url: mangaURL)
-                }
-                
-                vmCover.getImage(cover: URL(string: .getStringMainPicture(mainPicture: manga.mainPicture ?? "")))
-                print("Manga Id: \(manga.id)")
+            
+            japaneseTitle = vm.japaneseTitle(
+                manga.titleJapanese,
+                manga.titleEnglish,
+                manga.title)
+            if let mangaURL = manga.url {
+                mangaLink = vm.linkText(url: mangaURL)
+            }
+            
+            vmCover.getImage(cover: URL(string: .getStringMainPicture(mainPicture: manga.mainPicture ?? "")))
+            print("Manga Id: \(manga.id)")
+            vm.loadInitManga(manga.id)
+        }
+        .onChange(of: reload) { oldValue, newValue in
+            if newValue {
+                print("RELOAD ...")
                 vm.loadInitManga(manga.id)
+                reload.toggle()
             }
-            .onChange(of: reload) { oldValue, newValue in
-                if newValue {
-                    print("RELOAD ...")
-                    vm.loadInitManga(manga.id)
-                    reload.toggle()
-                }
-            }
-        //}
+        }
     }
     
     func getFavouriteManga(_ id: Int) throws -> Bool {
@@ -276,6 +237,11 @@ struct MangaDetailView: View {
         } else {
             return false
         }
+    }
+    
+    func insertFavouriteManga(_ manga: MangaData) throws -> Bool {
+        modelContext.insert(manga)
+        return true
     }
     
     func deleteFavouriteManga(_ id: Int) throws -> Bool {
@@ -305,7 +271,8 @@ struct MangaDetailView: View {
                         .resizable()
                         .scaledToFill()
                         .scaleEffect(scale)
-                        .frame(width: 300, height: 450)
+                        //.frame(width: 300, height: 450) // iPhone
+                        .frame(width: isiPhone ? 300 : 600, height: isiPhone ? 450 : 750)
                         .clipped()
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                         .overlay(
@@ -332,30 +299,13 @@ struct MangaDetailView: View {
                 }*/
                 
             }
-            .frame(width: 300, height: 450)
+            //.frame(width: 300, height: 450) // iPhone
+            .frame(width: isiPhone ? 300 : 600, height: isiPhone ? 450 : 750)
             .onAppear {
                 //vm.getImage(cover: URL(string: .getStringMainPicture(mainPicture: urlString)))
                 startBreathingAnimation()
             }
         }
-        
-        /*private var placeholder: some View {
-            ZStack {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(
-                        LinearGradient(
-                            colors: [Color.purple.opacity(0.2), Color.blue.opacity(0.2)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                
-                Image(systemName: "apple.books.pages.fill")
-                    .font(.system(size: 60))
-                    .foregroundStyle(.secondary.opacity(0.5))
-            }
-            .frame(width: 300, height: 450)
-        }*/
         
         private func startBreathingAnimation() {
             // Delay inicial antes de empezar
@@ -372,39 +322,6 @@ struct MangaDetailView: View {
             }
         }
     }
-    
-    /*struct MangaCoverView: View {
-        let urlString: String
-        @State private var vm = CoverVM()
-        
-        var body: some View {
-            Group {
-                
-                if let image = vm.image {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 300)
-                        .clipShape(Rectangle())
-                } else {
-                    placeholder
-                }
-                
-            }
-            .onAppear {
-                vm.getImage(cover: URL(string: .getStringMainPicture(mainPicture: urlString)))
-            }
-        }
-        
-        private var placeholder: some View {
-            Image(systemName: "apple.books.pages.fill")
-                .font(.largeTitle)
-                .frame(width: 90, height: 140)
-                //.clipShape(.circle)
-                .background(.gray.opacity(0.3), in: .rect(cornerRadius: 11))
-                //.background(.red.opacity(0.1), in: .circle)
-        }
-    }*/
     
     private var placeholder: some View {
         
@@ -574,7 +491,7 @@ struct MangaDetailView: View {
                         )
                     }
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, isiPhone ? 20 : 100)
                 .padding(.top, 8)
                 
                 // ******
@@ -696,7 +613,7 @@ struct MangaDetailView: View {
                         )
                     }
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, isiPhone ? 20 : 100)
                 .padding(.top, 8)
                 
                 // ******
@@ -885,7 +802,8 @@ struct MangaDetailView: View {
                         
                     }
                 }
-                .padding(.horizontal)
+                //.padding(.horizontal)
+                .padding(.horizontal, isiPhone ? 20 : 100)
                 .padding(.top, 5)
                 .padding(.bottom, 20)
                 

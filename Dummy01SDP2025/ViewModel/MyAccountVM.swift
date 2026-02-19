@@ -17,10 +17,19 @@ final class MyAccountVM {
         self.keychainManager = keychainManager
     }
     
+    func getEmail() -> String {
+        do {
+            return try keychainManager.getAuthEmail()
+        } catch {
+            return ""
+        }
+    }
+    
     func logout() {
         
         do {
             try keychainManager.deleteAuthToken()
+            try keychainManager.deleteAuthEmail()
             print ("Logout correcto: Token borrado del Keychain")
         } catch {
             print("Error al borrarrrr el token: \(error.localizedDescription)")

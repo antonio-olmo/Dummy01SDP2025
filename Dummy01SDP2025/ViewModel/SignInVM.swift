@@ -95,7 +95,8 @@ final class SignInVM {
             // Almacenamos el token en el Keychain de forma segura
             do {
                 try keychainManager.saveAuthToken(token.token)
-                print("Token guardado en Keychain: \(token.token)")
+                try keychainManager.saveAuthEmail(username)
+                print("Token y email guardados en Keychain: \(token.token) - \(username)")
                 
                 isLoading = false
                 hasAuthentication.toggle()

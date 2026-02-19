@@ -182,7 +182,7 @@ struct AddMangaView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancelar") {
-                        // Handle cancel
+                        dismiss()
                     }
                 }
                 

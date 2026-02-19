@@ -14,72 +14,81 @@ struct SignUpView: View {
         
     var body: some View {
         
-        ZStack {
-            // Fondo degradado blanco a gris estilo manga
-            LinearGradient(
-                gradient: Gradient(stops: [
-                    .init(color: Color.white, location: 0.0),
-                    .init(color: Color(white: 0.95), location: 0.2),
-                    .init(color: Color(white: 0.90), location: 0.5),
-                    .init(color: Color(white: 0.85), location: 0.75),
-                    .init(color: Color(white: 0.80), location: 1.0)
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-            
-            // Overlay con textura de papel manga (blur)
-            Rectangle()
-                .fill(Color.black.opacity(0.02))
+        GeometryReader { geometry in
+            ZStack {
+                // Fondo degradado blanco a gris estilo manga
+                LinearGradient(
+                    gradient: Gradient(stops: [
+                        .init(color: Color.white, location: 0.0),
+                        .init(color: Color(white: 0.95), location: 0.2),
+                        .init(color: Color(white: 0.90), location: 0.5),
+                        .init(color: Color(white: 0.85), location: 0.75),
+                        .init(color: Color(white: 0.80), location: 1.0)
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
                 .ignoresSafeArea()
-                .blur(radius: 50)
-            
-            // Contenido principal
-            ScrollView {
-                VStack(spacing: 30) {
-                    Spacer()
-                        .frame(height: 20)
-                    
-                    // Logo y título
-                    headerSection
-                    
-                    // Formulario con efecto de cristal mejorado
-                    GlassEffectContainer(spacing: 20) {
-                        VStack(spacing: 20) {
-                            emailField
-                            passwordField
-                            confirmPasswordField
-                            termsCheckbox
-                            signUpButton
+                
+                // Overlay con textura de papel manga (blur)
+                Rectangle()
+                    .fill(Color.black.opacity(0.02))
+                    .ignoresSafeArea()
+                    .blur(radius: 50)
+                
+                // Contenido principal
+                ScrollView {
+                    VStack(spacing: 30) {
+                        Spacer()
+                            .frame(height: 20)
+                        
+                        // Logo y título
+                        headerSection
+                            .padding(.top, isiPhone ? 0 :
+                                        geometry.size.height > geometry.size.width ?
+                                    geometry.size.height * 0.14 :
+                                    geometry.size.height * 0.02
+                                        
+                            )
+                        
+                        // Formulario con efecto de cristal mejorado
+                        GlassEffectContainer(spacing: 20) {
+                            VStack(spacing: 20) {
+                                emailField
+                                passwordField
+                                confirmPasswordField
+                                termsCheckbox
+                                signUpButton
+                            }
+                            .padding(30)
+                            .background(
+                                // Capa semi-opaca clara detrás del cristal para legibilidad en fondo blanco
+                                RoundedRectangle(cornerRadius: 24)
+                                    .fill(Color.white.opacity(0.7))
+                            )
+                            .glassEffect(.regular, in: .rect(cornerRadius: 24))
                         }
-                        .padding(30)
-                        .background(
-                            // Capa semi-opaca clara detrás del cristal para legibilidad en fondo blanco
-                            RoundedRectangle(cornerRadius: 24)
-                                .fill(Color.white.opacity(0.7))
-                        )
-                        .glassEffect(.regular, in: .rect(cornerRadius: 24))
+                        //.padding(.horizontal, 24)
+                        .padding(.horizontal, isiPhone ? 24 : geometry.size.width * 0.2)
+                        
+                        // Opciones adicionales
+                        footerSection
+                        
+                        Spacer()
                     }
-                    .padding(.horizontal, 24)
-                    
-                    // Opciones adicionales
-                    footerSection
-                    
-                    Spacer()
                 }
             }
-        }
-        .alert("Registro de Usuario", isPresented: $vm.showAlert) {
-            Button("OK", role: .cancel) {
-                if vm.alertMessage.contains("exitoso") {
-                    dismiss()
-                } else {
-                    vm.isLoading.toggle()
+            .alert("Registro de Usuario", isPresented: $vm.showAlert) {
+                Button("OK", role: .cancel) {
+                    if vm.alertMessage.contains("exitoso") {
+                        dismiss()
+                    } else {
+                        vm.isLoading.toggle()
+                    }
                 }
+            } message: {
+                Text(vm.alertMessage)
             }
-        } message: {
-            Text(vm.alertMessage)
         }
     }
     
@@ -107,6 +116,7 @@ struct SignUpView: View {
                             .strokeBorder(Color.black.opacity(0.3), lineWidth: 2)
                     )
                 
+                //Image(systemName: "person.circle.fill")
                 Image(systemName: "person.circle.fill")
                     .font(.system(size: 70))
                     .foregroundStyle(

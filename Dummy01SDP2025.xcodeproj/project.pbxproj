@@ -24,10 +24,12 @@
 		A94732792F0196E2005498A6 /* ListsVM_BAK.swift in Sources */ = {isa = PBXBuildFile; fileRef = A94732782F0196E2005498A6 /* ListsVM_BAK.swift */; };
 		A947327B2F01BBEB005498A6 /* MangaDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A947327A2F01BBEB005498A6 /* MangaDetailView.swift */; };
 		A95609EB2F143B0600CEEA1A /* MangaDetailVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = A95609EA2F143B0600CEEA1A /* MangaDetailVM.swift */; };
+		A95D2D132F3C789200B429EF /* FavouriteMangaVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = A95D2D122F3C789200B429EF /* FavouriteMangaVM.swift */; };
 		A95D9C8C2F264F6E0068FBA6 /* RatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A95D9C8B2F264F6E0068FBA6 /* RatingView.swift */; };
 		A960BAA02F03BCE600088BF1 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A960BA9F2F03BCE600088BF1 /* SignInView.swift */; };
 		A978D3AD2F3A796E0013BFC2 /* MainTabVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = A978D3AC2F3A796E0013BFC2 /* MainTabVM.swift */; };
 		A984143D2EFDDE5D00525604 /* DemographicVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = A984143C2EFDDE5D00525604 /* DemographicVM.swift */; };
+		A98C790F2F47371E00F40F2F /* sdp25.icon in Resources */ = {isa = PBXBuildFile; fileRef = A98C790E2F47371E00F40F2F /* sdp25.icon */; };
 		A999BB292F12F1A500DB6F72 /* CollectionVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = A999BB282F12F1A500DB6F72 /* CollectionVM.swift */; };
 		A9A1C5C72EFB649400262931 /* GenresVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A1C5C62EFB649400262931 /* GenresVM.swift */; };
 		A9A6416B2F05444F007E3D04 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A6416A2F05444F007E3D04 /* SignUpView.swift */; };
@@ -77,10 +79,12 @@
 		A94732782F0196E2005498A6 /* ListsVM_BAK.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsVM_BAK.swift; sourceTree = "<group>"; };
 		A947327A2F01BBEB005498A6 /* MangaDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangaDetailView.swift; sourceTree = "<group>"; };
 		A95609EA2F143B0600CEEA1A /* MangaDetailVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangaDetailVM.swift; sourceTree = "<group>"; };
+		A95D2D122F3C789200B429EF /* FavouriteMangaVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavouriteMangaVM.swift; sourceTree = "<group>"; };
 		A95D9C8B2F264F6E0068FBA6 /* RatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingView.swift; sourceTree = "<group>"; };
 		A960BA9F2F03BCE600088BF1 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		A978D3AC2F3A796E0013BFC2 /* MainTabVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabVM.swift; sourceTree = "<group>"; };
 		A984143C2EFDDE5D00525604 /* DemographicVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemographicVM.swift; sourceTree = "<group>"; };
+		A98C790E2F47371E00F40F2F /* sdp25.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = sdp25.icon; sourceTree = "<group>"; };
 		A999BB282F12F1A500DB6F72 /* CollectionVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionVM.swift; sourceTree = "<group>"; };
 		A9A1C5C62EFB649400262931 /* GenresVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresVM.swift; sourceTree = "<group>"; };
 		A9A6416A2F05444F007E3D04 /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
@@ -169,10 +173,10 @@
 		A9B17B292EEF41AA00191A52 /* Dummy01SDP2025 */ = {
 			isa = PBXGroup;
 			children = (
+				A9B17B272EEF41AA00191A52 /* ContentView.swift */,
 				A960BA9F2F03BCE600088BF1 /* SignInView.swift */,
 				A9A6416A2F05444F007E3D04 /* SignUpView.swift */,
 				A90624652EF21624001A00A2 /* MainTabView.swift */,
-				A9B17B272EEF41AA00191A52 /* ContentView.swift */,
 				A94732762F01964E005498A6 /* ListsView_BAK.swift */,
 				A94136A62EF4C7E100AD6BF7 /* ListsView.swift */,
 				A93276B42EF9C5C50052E4D3 /* MangasByListView.swift */,
@@ -193,6 +197,7 @@
 				A9B17B252EEF41AA00191A52 /* Model */,
 				A9B17B452EEF625800191A52 /* Extensions */,
 				A9B17B262EEF41AA00191A52 /* Assets.xcassets */,
+				A98C790E2F47371E00F40F2F /* sdp25.icon */,
 				A9B17B282EEF41AA00191A52 /* Dummy01SDP2025App.swift */,
 			);
 			path = Dummy01SDP2025;
@@ -223,6 +228,7 @@
 			isa = PBXGroup;
 			children = (
 				A978D3AC2F3A796E0013BFC2 /* MainTabVM.swift */,
+				A95D2D122F3C789200B429EF /* FavouriteMangaVM.swift */,
 				A9B17B412EEF616600191A52 /* MangasVM.swift */,
 				A90624672EF21863001A00A2 /* SearchVM.swift */,
 				A9C75E602EFF5D0B0024C13E /* MangasByListVM.swift */,
@@ -331,6 +337,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9B17B2A2EEF41AA00191A52 /* Assets.xcassets in Resources */,
+				A98C790F2F47371E00F40F2F /* sdp25.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +363,7 @@
 				A9C9226A2EF880E700CB8FC6 /* MangaListRow.swift in Sources */,
 				A94732792F0196E2005498A6 /* ListsVM_BAK.swift in Sources */,
 				A9B17B392EEF542300191A52 /* URL.swift in Sources */,
+				A95D2D132F3C789200B429EF /* FavouriteMangaVM.swift in Sources */,
 				A9B17B3A2EEF542300191A52 /* NetworkError.swift in Sources */,
 				A95609EB2F143B0600CEEA1A /* MangaDetailVM.swift in Sources */,
 				A978D3AD2F3A796E0013BFC2 /* MainTabVM.swift in Sources */,
@@ -530,7 +538,7 @@
 		A9B17B222EEF417C00191A52 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = sdp25;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -540,8 +548,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -563,7 +571,7 @@
 		A9B17B232EEF417C00191A52 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = sdp25;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -573,8 +581,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

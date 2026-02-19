@@ -55,6 +55,7 @@ final class MainVM {
         Task {
             do {
                 try await manageRenewedToken()
+                isVerifying = false
             } catch KeychainManager.KeychainError.itemNotFound {
                 print("No hay token. Vamos al login ...")
                 isAuthenticated = false
@@ -67,7 +68,7 @@ final class MainVM {
             // Esperar un momento para que se vea la animación, no sé si quitarlo ...
             //try? await Task.sleep(for: .milliseconds(500))
             
-            isVerifying = false
+            //isVerifying = false
         }
     }
     

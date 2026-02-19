@@ -65,7 +65,7 @@ final class ThemesVM {
         
             await getTotalMangasByTheme(theme: theme)
             self.randomPage = Int.random(in: 1...Int((Double(self.totalMangasByTheme) / Double(self.stepPer)).rounded(.up)))
-            print("Total mangas \(theme): \(self.totalMangasByTheme) - Page: \(self.randomPage)")
+            //print("Total mangas \(theme): \(self.totalMangasByTheme) - Page: \(self.randomPage)")
             let mangas = try await repository.getMangasByTheme(theme: theme, page: self.randomPage, per: 3)
             self.themesDictionary[theme] = mangas //.sorted { $0.id < $1.id }
             self.randomPageThemesDictionary[theme] = self.randomPage

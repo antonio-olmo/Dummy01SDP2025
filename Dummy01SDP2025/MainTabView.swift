@@ -34,6 +34,9 @@ import SwiftUI
     MainTabView()
 }*/
 
+// Global para iPad ...
+@MainActor let isiPhone = UIDevice.current.userInterfaceIdiom == .phone
+
 struct MainTabView: View {
     
     @State var vm = MainTabVM()
@@ -66,6 +69,7 @@ struct MainTabView: View {
                 }
             }
         }
+        .tabViewStyle(.sidebarAdaptable)
         .onChange(of: vm.selectedTab) { oldValue, newValue in
             // Resetear el path de la tab anterior cuando cambias de tab
             switch oldValue {

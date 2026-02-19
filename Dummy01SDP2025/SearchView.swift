@@ -9,21 +9,24 @@ import SwiftUI
 
 struct SearchView: View {
     
+    @AppStorage("nickName") var nickName: String = ""
+    
     //@State private var searchTask: Task<Void, Never>?
     @State private var vm = SearchVM()
     
+    let itemManga: [GridItem] = [GridItem(.adaptive(minimum: 300))]
+    
     var body: some View {
-        //NavigationStack {
-            VStack {
-                /*Text("Búsquedas")
-                    .font(.headline)*/
-                if vm.mangaResult.isEmpty {
-                    searchView                    
-                } else {
-                    /*List(vm.mangaResult) { manga in
-                        Text(manga.title)
-                    }*/
-                    ScrollView {
+        
+        VStack {
+            
+            if vm.mangaResult.isEmpty {
+                searchView
+            } else {
+                ScrollView {
+                    
+                    if isiPhone {
+                        
                         LazyVStack (alignment: .leading) {
                             ForEach(vm.mangaResult) { manga in
                                 NavigationLink(value: manga) {
@@ -44,99 +47,66 @@ struct SearchView: View {
                                 .frame(maxWidth: .infinity)
                             }
                         }
-                    }
-                    .safeAreaPadding()                    
-                    .buttonStyle(.plain)
-                }
-            }
-            
-            .navigationTitle("Busca por título o autor")
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationDestination(for: Manga.self) { manga in
-                MangaDetailView(manga: manga)
-            }
-            .searchable(text: $vm.search, prompt: vm.busqueda == .title ? "Busca por el título" : "Busca por el autor")
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Menu {
-                        ForEach(TipoBusqueda.allCases) { busqueda in
-                            Button {
-                                vm.busqueda = busqueda
-                            } label: {
+                        
+                    } else {
+                        
+                        LazyVGrid(columns: itemManga) {
+                            ForEach(vm.mangaResult) { manga in
+                                NavigationLink(value: manga) {
+                                    MangaRow(manga: manga)
+                                }
+                            }
+                            if vm.mangaResult.count > 1 && vm.searchComplete && !vm.lastSearch {
                                 HStack {
-                                    Text(busqueda.rawValue)
-                                    if vm.busqueda == busqueda {
-                                        Image(systemName: "checkmark")
-                                    }
+                                    ProgressView()
+                                        .onAppear {
+                                            Task {
+                                                vm.busqueda == .title ? await vm.findBooks() : await vm.findAuthors()
+                                            }
+                                        }
+                                    Text("cargando mangas ...")
+                                        .font(.footnote)
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
+                        }
+                    }
+                }
+                .safeAreaPadding()
+                .buttonStyle(.plain)
+            }
+        }
+        
+        .navigationTitle("Busca por título o autor")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(for: Manga.self) { manga in
+            MangaDetailView(manga: manga)
+        }
+        .searchable(text: $vm.search, prompt: vm.busqueda == .title ? "Busca por el título" : "Busca por el autor")
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Menu {
+                    ForEach(TipoBusqueda.allCases) { busqueda in
+                        Button {
+                            vm.busqueda = busqueda
+                        } label: {
+                            HStack {
+                                Text(busqueda.rawValue)
+                                if vm.busqueda == busqueda {
+                                    Image(systemName: "checkmark")
                                 }
                             }
                         }
-                    } label: {
-                        Label("Búsqueda", systemImage: "square.stack.fill")
                     }
+                } label: {
+                    Label("Búsqueda", systemImage: "square.stack.fill")
                 }
             }
-            /*.onChange(of: vm.search) {
-                if vm.search.count > 2 {
-                    
-                    if vm.searchComplete {
-                        vm.searchComplete = false
-                        vm.page = 0
-                        vm.mangaResult = []
-                        Task {
-                            print("Inicio búsqueda")
-                            vm.busqueda == .title ? await vm.findBooks() : await vm.findAuthors()
-                            print("Fin búsqueda")
-                            vm.searchComplete = true
-                        }
-                    } else {
-                        print("no procede ...")
-                    }
-                } else {
-                    vm.mangaResult = []
-                }
-            }*/
-            .onChange(of: vm.search) {
-                
-                vm.searching()
-                
-                /*if vm.search.count > 2 {
-                    
-                    //if vm.searchComplete {
-                        vm.searchComplete = false
-                        vm.page = 0
-                        vm.mangaResult = []
-                        
-                        // Cancelar la búsqueda pendiente si existe
-                        searchTask?.cancel()
-                        
-                        // Crear nueva tarea con delay de 300ms
-                        searchTask = Task {
-                            do {
-                                try await Task.sleep(for: .milliseconds(300))
-                                
-                                // Verificar si la tarea no fue cancelada
-                                guard !Task.isCancelled else { return }
-                                
-                                print("Inicio búsqueda")
-                                vm.busqueda == .title ? await vm.findBooks() : await vm.findAuthors()
-                                print("Fin búsqueda")
-                                vm.searchComplete = true
-                            } catch {
-                                // Task fue cancelada o hubo error en sleep
-                                print("Búsqueda cancelada")
-                                vm.searchComplete = true
-                            }
-                        }
-                    //}
-                } else {
-                    // Cancelar cualquier búsqueda pendiente cuando hay menos de 3 caracteres
-                    searchTask?.cancel()
-                    vm.searchComplete = true
-                    vm.mangaResult = []
-                }*/
-            }
-        //}
+        }
+        .onChange(of: vm.search) {
+            vm.searching()
+        }
+        
     }
     
     var searchView: some View {
@@ -156,23 +126,24 @@ struct SearchView: View {
                         Image(.searching)
                             .resizable()
                             .scaledToFit()
-                            .frame(height:200)
+                            .frame(height: isiPhone ? 200 : 300)
                             .foregroundStyle(.secondary)
                     }
                 } description: {
                 }
+                .padding(.horizontal, isiPhone ? 0 : 100)
                 
             } else if vm.search.isEmpty {
                 ContentUnavailableView {
                     Label {
-                        Text("¿Qué busco?")
+                        Text(nickName == "" ? "¿Qué busco?" : "\(nickName)\n¿Qué buscas?")
                             .font(.title2)
                             .fontWeight(.semibold)
                     } icon: {
                         Image(.search)
                             .resizable()
                             .scaledToFit()
-                            .frame(height:200)
+                            .frame(height: isiPhone ? 200 : 300)
                             .foregroundStyle(.secondary)
                     }
                 } description: {
@@ -189,7 +160,7 @@ struct SearchView: View {
                     .padding(.horizontal)
                     
                 }
-                
+                .padding(.horizontal, isiPhone ? 0 : 100)
                 
             } else if vm.search.count <= 2 {
                 
@@ -202,7 +173,7 @@ struct SearchView: View {
                         Image(.three)
                             .resizable()
                             .scaledToFit()
-                            .frame(height:200)
+                            .frame(height: isiPhone ? 200 : 300)
                             .foregroundStyle(.secondary)
                     }
                 } description: {
@@ -219,19 +190,20 @@ struct SearchView: View {
                     .padding(.horizontal)
                     
                 }
+                .padding(.horizontal, isiPhone ? 0 : 100)
                 
             } else if !vm.search.isEmpty {
                 
                 ContentUnavailableView {
                     Label {
-                        Text("Lo siento ...")
+                        Text(nickName == "" ? "Lo siento ..." : "Lo siento, \(nickName) ... ")
                             .font(.title2)
                             .fontWeight(.semibold)
                     } icon: {
                         Image(.noFound)
                             .resizable()
                             .scaledToFit()
-                            .frame(height:200)
+                            .frame(height: isiPhone ? 200 : 300)
                             .foregroundStyle(.secondary)
                     }
                 } description: {
@@ -248,6 +220,8 @@ struct SearchView: View {
                     .padding(.horizontal)
                     
                 }
+                .padding(.horizontal, isiPhone ? 0 : 100)
+    
             }
         }
     }

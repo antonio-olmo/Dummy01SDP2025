@@ -103,6 +103,10 @@ extension URL {
             ])
     }
     
+    static func getMangaById(id: Int) -> URL {
+        api.appending(path: "/search/manga").appending(path: String(id))
+    }
+    
     static func findBooks1(search: String) -> URL {
         api.appending(path: "/search/mangasContains").appending(path: search)
     }

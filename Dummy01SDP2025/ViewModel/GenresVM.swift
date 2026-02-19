@@ -64,6 +64,7 @@ final class GenresVM {
         
             await getTotalMangasByGenre(genre: genre)
             self.randomPage = Int.random(in: 1...Int((Double(self.totalMangasByGenre) / Double(self.stepPer)).rounded(.up)))            
+            print("Total mangas \(genre): \(self.totalMangasByGenre) - Page: \(self.randomPage)")
             let mangas = try await repository.getMangasByGenre(genre: genre, page: self.randomPage, per: 3)
             self.genresDictionary[genre] = mangas
             self.randomPageGenresDictionary[genre] = self.randomPage

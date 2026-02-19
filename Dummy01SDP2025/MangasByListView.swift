@@ -12,23 +12,37 @@ struct MangasByListView: View {
     //@State var vm: MangasByThemeVM
     @State var vm: MangasByListVM
     
+    let itemManga: [GridItem] = [GridItem(.adaptive(minimum: 300))]
+    
     var body: some View {
         
             ScrollView {
-                LazyVStack  {
+                
+                if isiPhone {
                     
-                    
-                    
-                    if let mangas = vm.itemDictionary[vm.item] {
-                        ForEach(mangas) { manga in
-                            NavigationLink(value: manga) {
-                                MangaRow(manga: manga)
+                    LazyVStack  {                        
+                        if let mangas = vm.itemDictionary[vm.item] {
+                            ForEach(mangas) { manga in
+                                NavigationLink(value: manga) {
+                                    MangaRow(manga: manga)
+                                }
+                                .buttonStyle(.plain)
                             }
-                            .buttonStyle(.plain)
                         }
                     }
                     
+                } else {
                     
+                    LazyVGrid(columns: itemManga) {
+                        if let mangas = vm.itemDictionary[vm.item] {
+                            ForEach(mangas) { manga in
+                                NavigationLink(value: manga) {
+                                    MangaRow(manga: manga)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
                 }
             }
             .scrollIndicators(.hidden)

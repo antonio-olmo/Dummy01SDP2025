@@ -27,7 +27,7 @@ final class MangaDetailVM {
     var showAlert = false
     var alertMessage = ""
     
-    
+    var dataLoaded = false
     
     init(repository: NetworkRepository = Network(), keychainManager: KeychainManager = KeychainManager.shared) {
         self.repository = repository
@@ -41,6 +41,7 @@ final class MangaDetailVM {
             
             do {
                 try await self.getMangaCollection(id: id)
+                self.dataLoaded = true
             } catch KeychainManager.KeychainError.itemNotFound {
                 print("No hay token. Vamos al login ...")
                 try? keychainManager.deleteAuthToken()

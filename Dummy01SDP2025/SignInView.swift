@@ -13,76 +13,91 @@ struct SignInView: View {
     @State private var vm = SignInVM()
         
     var body: some View {
-        ZStack {
-            // Fondo degradado blanco a gris estilo manga
-            LinearGradient(
-                gradient: Gradient(stops: [
-                    .init(color: Color.white, location: 0.0),
-                    .init(color: Color(white: 0.95), location: 0.2),
-                    .init(color: Color(white: 0.90), location: 0.5),
-                    .init(color: Color(white: 0.85), location: 0.75),
-                    .init(color: Color(white: 0.80), location: 1.0)
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-            
-            // Overlay con textura de papel manga (blur)
-            Rectangle()
-                .fill(Color.black.opacity(0.02))
+        
+        GeometryReader { geometry in
+            ZStack {
+                // Fondo degradado blanco a gris estilo manga
+                LinearGradient(
+                    gradient: Gradient(stops: [
+                        .init(color: Color.white, location: 0.0),
+                        .init(color: Color(white: 0.95), location: 0.2),
+                        .init(color: Color(white: 0.90), location: 0.5),
+                        .init(color: Color(white: 0.85), location: 0.75),
+                        .init(color: Color(white: 0.80), location: 1.0)
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
                 .ignoresSafeArea()
-                .blur(radius: 50)
-            
-            // Contenido principal
-            ScrollView {
-                VStack(spacing: 30) {
-                    Spacer()
-                        .frame(height: 40)
-                    
-                    // Logo y título
-                    headerSection
-                    
-                    // Formulario con efecto de cristal mejorado
-                    GlassEffectContainer(spacing: 20) {
-                        VStack(spacing: 20) {
-                            emailField
-                            passwordField
-                            signInButton
+                
+                // Overlay con textura de papel manga (blur)
+                Rectangle()
+                    .fill(Color.black.opacity(0.02))
+                    .ignoresSafeArea()
+                    .blur(radius: 50)
+                
+                // Contenido principal
+                ScrollView {
+                    VStack(spacing: 30) {
+                        
+                        if isiPhone {
+                            Spacer()
+                                .frame(height: 40)
                         }
-                        .padding(30)
-                        .background(
-                            // Capa semi-opaca clara detrás del cristal para legibilidad en fondo blanco
-                            RoundedRectangle(cornerRadius: 24)
-                                .fill(Color.white.opacity(0.7))
-                        )
-                        .glassEffect(.regular, in: .rect(cornerRadius: 24))
+                        
+                        // Logo y título
+                        headerSection
+                            .padding(.top, isiPhone ? 0 :
+                                    geometry.size.height < 900 ?
+                                    geometry.size.height * 0.1 :
+                                    geometry.size.height * 0.2
+                                        
+                            )
+                        
+                        // Formulario con efecto de cristal mejorado
+                        GlassEffectContainer(spacing: 20) {
+                            VStack(spacing: 20) {
+                                //Text("\(geometry.size.width)")
+                                emailField
+                                passwordField
+                                signInButton
+                            }
+                            .padding(30)
+                            .background(
+                                // Capa semi-opaca clara detrás del cristal para legibilidad en fondo blanco
+                                RoundedRectangle(cornerRadius: 24)
+                                    .fill(Color.white.opacity(0.7))
+                            )
+                            .glassEffect(.regular, in: .rect(cornerRadius: 24))
+                        }
+                        //.padding(.horizontal, 24)
+                        .padding(.horizontal, isiPhone ? 24 : geometry.size.width * 0.2)
+                        
+                        Spacer()
+                        
+                        // Opciones adicionales
+                        footerSection
+                        
+                        //Spacer()
                     }
-                    .padding(.horizontal, 24)
-                    
-                    Spacer()
-                    
-                    // Opciones adicionales
-                    footerSection
-                    
-                    //Spacer()
                 }
+                //.padding(.top, 100)
             }
-        }
-        .task {
-            // Pasamos el binding del Main al VM !!!!
-            vm.mainVM = mainVM
-        }
-        .alert("Información", isPresented: $vm.showAlert) {
-            Button("OK", role: .cancel) { }
-        } message: {
-            Text(vm.alertMessage)
-        }
-        .fullScreenCover(isPresented: $vm.showSignUp) {
-            SignUpView()
-        }
-        .fullScreenCover(isPresented: $vm.hasAuthentication) {
-            MainTabView()
+            .task {
+                // Pasamos el binding del Main al VM !!!!
+                vm.mainVM = mainVM
+            }
+            .alert("Información", isPresented: $vm.showAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(vm.alertMessage)
+            }
+            .fullScreenCover(isPresented: $vm.showSignUp) {
+                SignUpView()
+            }
+            .fullScreenCover(isPresented: $vm.hasAuthentication) {
+                MainTabView()
+            }
         }
     }
            

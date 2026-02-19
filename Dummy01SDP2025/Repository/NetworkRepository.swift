@@ -30,6 +30,8 @@ protocol NetworkRepository: Sendable, NetworkInteractor {
     func getMangasByDemographic(demographic: String, page: Int, per: Int) async throws(NetworkError) -> [Manga]
     func findBooks(url: URL) async throws -> [Manga]
     //func findBooks(search: String) async throws -> [Manga]
+    
+    func getMangaById(id: Int) async throws(NetworkError) -> Manga
     func findMangaByAuthor(page: Int, per: Int, authorSearch: AuthorSearch) async throws(NetworkError) -> [Manga]
     func findMangaByTitle(page: Int, per: Int, titleSearch: TitleSearch) async throws(NetworkError) -> [Manga]
 }
@@ -120,6 +122,10 @@ struct Network: NetworkRepository {
         } else {
             return try await getJSON(.get(url: url), type: BasicMangaDTO.self).items.map { $0.toManga }
         }
+    }
+    
+    func getMangaById(id: Int) async throws(NetworkError) -> Manga {        
+        return try await getJSON(.get(url: .getMangaById(id: id)), type: MangaDTO.self).toManga
     }
     
     func findMangaByAuthor(page: Int, per: Int, authorSearch: AuthorSearch) async throws(NetworkError) -> [Manga] {

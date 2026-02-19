@@ -18,6 +18,8 @@ import SwiftData
 @main
 struct Dummy01SDP2025App: App {
     
+    @AppStorage("nickName") var nickName: String = ""
+    
     @Environment(\.scenePhase) private var scenePhase
     @State private var vm = MainVM()
         

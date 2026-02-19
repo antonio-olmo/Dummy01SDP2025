@@ -67,20 +67,64 @@ import SwiftData
 
 struct FavouriteMangaView: View {
     
-    @Environment(\.dismiss) private var dismiss
-    @Query var mangas: [MangaData]
+    @AppStorage("nickName") var nickName: String = ""
     
-    @State private var currentIndex: Int = 0
+    @Environment(\.dismiss) private var dismiss
+    //@Query var mangas: [MangaData]
+    @Query(sort: \MangaData.title, order: .forward) var mangas: [MangaData]
+    @State var vm = FavouriteMangaVM()
+    
+    @State private var isLoading = false
+    @State private var navigateToDetail = false
+    
+    @Binding var reload: Bool
     
     var body: some View {
-        
-        NavigationStack {
+            
             GeometryReader { geometry in
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack(spacing: 30) {
-                        ForEach(mangas) { favouriteManga in
-                            
-                            MangaCardView(manga: favouriteManga, size: geometry.size)
+                
+                if mangas.count > 0 {
+                
+                    HStack (alignment: .center) {
+                        Image(.standard)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height:60)
+                        VStack {
+                            Text("Estos son tus mangas favoritos")
+                                .fontWeight(.bold)
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [.purple.opacity(0.8), .blue.opacity(0.8)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                            Text("Puedes añadirlos a tu colección ...")
+                                .font(.footnote)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        LazyHStack(spacing: isiPhone ? 16 : -55) {
+                            ForEach(mangas) { favouriteManga in
+                                
+                                Button {
+                                    Task {
+                                        isLoading = true
+                                        await vm.getManga(favouriteManga.id)
+                                        isLoading = false
+                                        //if vm.manga != nil {
+                                        if let _ = vm.manga {
+                                            navigateToDetail = true
+                                        }
+                                    }
+                                } label: {
+                                    MangaCardView(manga: favouriteManga, size: geometry.size)
+                                }
+                                .disabled(isLoading)
                                 .containerRelativeFrame(.horizontal)
                                 .scrollTransition { content, phase in
                                     content
@@ -91,34 +135,77 @@ struct FavouriteMangaView: View {
                                             axis: (x: 0, y: 1, z: 0)
                                         )
                                 }
+                            }
+                        }
+                        .scrollTargetLayout()
+                    }
+                    .scrollTargetBehavior(.viewAligned)
+                    .contentMargins(.horizontal, 40, for: .scrollContent)
+                    .overlay {
+                        if isLoading {
+                            ZStack {
+                                Color.black.opacity(0.3)
+                                    .ignoresSafeArea()
+                                
+                                ProgressView("Cargando manga...")
+                                    .padding()
+                                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
+                            }
                         }
                     }
-                    .scrollTargetLayout()
+                    
+                } else {
+                    ContentUnavailableView {
+                        Label {                            
+                            
+                            Text(nickName == "" ? "¿Aún no tienes favoritos?" : "\(nickName)\n¿Aún no tienes favoritos?")
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                            
+                        } icon: {
+                            Image(.standard)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height:200)
+                                .foregroundStyle(.secondary)
+                        }
+                    } description: {
+                        
+                        VStack {
+                            Text("Busca, busca, y añade algunos ...")
+                                .foregroundStyle(.secondary)
+                            Text("No se grabarán en tu colección")
+                                .foregroundStyle(.secondary)
+                                .fontWeight(.semibold)
+                            Divider().padding(.horizontal)
+                            
+                            
+                        }
+                        .padding(.horizontal)
+                        
+                    }
                 }
-                .scrollTargetBehavior(.viewAligned)
-                .contentMargins(.horizontal, 40, for: .scrollContent)
             }
             .navigationTitle("Premiere (Favoritos)")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cerrar") {
-                        dismiss()
-                    }
+            .navigationDestination(isPresented: $navigateToDetail) {
+                if let manga = vm.manga {
+                    MangaDetailView(manga: manga)
                 }
             }
-        }
-        .presentationBackground {
-            LinearGradient(
-                colors: [
-                    Color(red: 1.0, green: 0.95, blue: 0.85),    // Durazno claro
-                    Color(red: 0.85, green: 0.75, blue: 0.95),   // Lavanda
-                    Color(red: 0.70, green: 0.85, blue: 1.0)     // Azul cielo
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        }
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancelar") {
+                        reload.toggle()
+                        dismiss()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.gray.opacity(0.6))
+                    
+                }
+            }
+            
+        
     }
 }
 
@@ -129,14 +216,26 @@ struct MangaCardView: View {
     
     var body: some View {
         ZStack(alignment: .center) {
-            // Imagen de fondo del manga
-            MangaCoverView(urlString: manga.mainPicture ?? "", standarHeight: size.height * 0.68)
+            // Imagen de fondo del manga 0.62
+            MangaCoverView(urlString: manga.mainPicture ?? "", standarHeight: isiPhone ? size.height * 0.62 : size.height * 0.72)
                 //.frame(height: size.height * 2.5 )
-                .clipped()
+                //.clipped()
                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
             
             // Overlay oscuro para mejor legibilidad
             RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            Color.black.opacity(0.6),
+                            Color.black.opacity(0.3),
+                            Color.black.opacity(0.1)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 4
+                )
                 .fill(
                     LinearGradient(
                         colors: [
@@ -148,7 +247,8 @@ struct MangaCardView: View {
                         endPoint: .bottom
                     )
                 )
-                .frame(width: size.width * 0.9)
+                .frame(width: size.width * 0.86, height: isiPhone ? size.height * 0.7 : size.height * 0.8)
+            
             
             // Título en el centro
             VStack(spacing: 12) {
@@ -167,7 +267,7 @@ struct MangaCardView: View {
                             .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: 5)
                     )
                 
-                if let englishTitle = manga.titleEnglish {
+                /*if let englishTitle = manga.titleEnglish {
                     Text(englishTitle)
                         .font(.system(size: 18, weight: .medium, design: .rounded))
                         .foregroundStyle(.white.opacity(0.9))
@@ -179,29 +279,14 @@ struct MangaCardView: View {
                             Capsule()
                                 .fill(.ultraThinMaterial.opacity(0.8))
                         )
-                }
+                }*/
                 
                 Spacer()
             }
         }
-        .frame(height: size.height * 0.8)
+        .frame(height: size.height)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .shadow(color: .black.opacity(0.4), radius: 20, x: 0, y: 10)
-        .overlay(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [
-                            Color.white.opacity(0.6),
-                            Color.white.opacity(0.3),
-                            Color.white.opacity(0.1)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 2
-                )
-        )
     }
 }
 
